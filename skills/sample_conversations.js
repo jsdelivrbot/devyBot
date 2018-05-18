@@ -11,17 +11,19 @@ through the conversation are chosen based on the user's response.
 
 module.exports = function(controller) {
 
-    controller.hears(['done'], 'direct_message,direct_mention', function(bot, message) {
+    controller.hears(['bio'], 'direct_message,direct_mention', function(bot, message) {
 
         bot.startConversation(message, function(err, convo) {
-            convo.say('This is an example of using convo.ask with a single callback.');
+            convo.say('here\'s the bio:');
+            convo.say('dir: '+ __dirname);
+            convo.say('href: '+ window.location.href);
+        
+//             convo.ask('What is your favorite color?', function(response, convo) {
 
-            convo.ask('What is your favorite color?', function(response, convo) {
+//                 convo.say('Cool, I like ' + response.text + ' too!');
+//                 convo.next();
 
-                convo.say('Cool, I like ' + response.text + ' too!');
-                convo.next();
-
-            });
+//             });
         });
 
     });
