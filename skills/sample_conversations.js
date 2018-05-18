@@ -16,7 +16,12 @@ module.exports = function(controller) {
         bot.startConversation(message, function(err, convo) {
             convo.say('here\'s the bio:');
             convo.say('dir: '+ __dirname);
+            //xconvo.say('hostname: '+ window.location.hostname);
+            convo.say('pathname: '+ window.location.pathname);
             convo.say('href: '+ window.location.href);
+            convo.say('The end!');
+        
+          
         
 //             convo.ask('What is your favorite color?', function(response, convo) {
 
