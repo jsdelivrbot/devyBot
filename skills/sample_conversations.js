@@ -11,7 +11,7 @@ through the conversation are chosen based on the user's response.
 
 module.exports = function(controller) {
 
-    controller.hears(['I\'m done'], 'direct_message,direct_mention', function(bot, message) {
+    controller.hears(['done'], 'direct_message,direct_mention', function(bot, message) {
 
         bot.startConversation(message, function(err, convo) {
             convo.say('This is an example of using convo.ask with a single callback.');
@@ -51,7 +51,7 @@ module.exports = function(controller) {
             },'bad_response');
 
             // Create a yes/no question in the default thread...
-            convo.ask('Do you like cheese?', [
+            convo.ask('version1', [
                 {
                     pattern:  bot.utterances.yes,
                     callback: function(response, convo) {
