@@ -93,7 +93,8 @@ module.exports = function(controller) {
     
     bot.createConversation(message, function(err, convo) {
         convo.say('default reply');
-    })
-  })
+    });
+    
+  });
 
 }
