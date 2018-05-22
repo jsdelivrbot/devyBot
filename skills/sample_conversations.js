@@ -67,20 +67,20 @@ module.exports = function(controller) {
                   attachments.push({
                     text: fileNames[i],
                     attachment_type: 'default',
-                    callback_id: '1'+i,
+                    callback_id: '123',
                     actions: [{
-                        "name":i,
+                        "name":i.toString(),
                         "text": "Remove",
-                        "value": i,
+                        "value":i.toString(),
                         "type": "button",
                     }]
                   });
                   patterns.push(
                     {
-                    pattern:i,
+                    pattern:i.toString(),
                     callback: function(reply, convo) {
                     delete fileNames[i];
-                    convo.say(fileNames[i] + 'Removed!');
+                    convo.say(fileNames[i] + ' is removed from the adding list!');
                    }}
                   );
                 }
