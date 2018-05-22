@@ -35,7 +35,7 @@ module.exports = function(controller) {
                 attachment_type: 'default',
                 actions: [
                     {
-                        "name":"yes",
+                        "name":"yas",
                         "text": "Yes",
                         "value": "yes",
                         "type": "button",
@@ -60,10 +60,9 @@ module.exports = function(controller) {
         {
             pattern: "no",
             callback: function(reply, convo) {
-                convo.say();
-                convo.next();
                 // review single files
                 var attachments = [];
+                var patterns = [];
                 for (let i in fileNames) {
                   attachments.push({
                     text: fileNames[i],
@@ -71,21 +70,25 @@ module.exports = function(controller) {
                     actions: [{
                         "name":i,
                         "text": "Remove",
-                        "value": "yes",
+                        "value": i,
                         "type": "button",
                     }]
                   });
+                      convo.say('OK here');
+
+                //   patterns.push(
+                //     {
+                //     pattern:i,
+                //     callback: function(reply, convo) {
+                //     delete fileNames[i];
+                //     convo.say(fileNames[i] + 'Removed!');
+                //    }}
+                //   );
                 }
-                convo.ask(
-                  attachments,
-                  [{
-                    pattern:i,
-                    callback: function(reply, convo) {
-                    delete fileNames[i];
-                    convo.say(fileNames[i] + 'Removed!');
-                    convo.next();
-                   }}]);
-                  
+                // convo.ask(
+                //   attachments,
+                //   patterns);
+                convo.next();
         }}]);
         }
         // {
