@@ -12,12 +12,22 @@ through the conversation are chosen based on the user's response.
 module.exports = function(controller) {
 
   // addFiles intent
-    boolean 
     controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
 
-      // 
-      if (
-        bot.startConversation(message, function(err, convo) {
+      // reply should be received from back-end
+      var reply = "OK, I've added the following files:";
+      var fileNames = [];
+      fileNames.push('example1.js');
+      fileNames.push('example2.js');
+      bot.startConversation(message, function(err, convo) {
+        convo.say(reply);
+        for (let i of fileNames) { 
+          convo.say(i);
+        }
+      });
+      
+//       if (
+//         bot.startConversation(message, function(err, convo) {
           
         
 //             convo.ask('What is your favorite color?', function(response, convo) {
@@ -26,16 +36,13 @@ module.exports = function(controller) {
 //                 convo.next();
 
 //             });
-        });
-
     });
+    
 
 
-    controller.hears(['question'], 'direct_message,direct_mention', function(bot, message) {
+    controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
 
         bot.createConversation(message, function(err, convo) {
-
-          
           
             // create a path for when a user says YES
             convo.addMessage({
