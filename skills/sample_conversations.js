@@ -67,6 +67,7 @@ module.exports = function(controller) {
                   attachments.push({
                     text: fileNames[i],
                     attachment_type: 'default',
+                    callback_id: '1'+i,
                     actions: [{
                         "name":i,
                         "text": "Remove",
@@ -74,21 +75,22 @@ module.exports = function(controller) {
                         "type": "button",
                     }]
                   });
-                      convo.say('OK here');
-
-                //   patterns.push(
-                //     {
-                //     pattern:i,
-                //     callback: function(reply, convo) {
-                //     delete fileNames[i];
-                //     convo.say(fileNames[i] + 'Removed!');
-                //    }}
-                //   );
+                  patterns.push(
+                    {
+                    pattern:i,
+                    callback: function(reply, convo) {
+                    delete fileNames[i];
+                    convo.say(fileNames[i] + 'Removed!');
+                   }}
+                  );
                 }
-                // convo.ask(
-                //   attachments,
-                //   patterns);
-                convo.next();
+               convo.say('Let\'s review the files then:');
+              let attachments_object = {};
+              attachments_object.attachments = attachments;
+               convo.ask(
+                  attachments_object,
+                  patterns);
+               convo.next();
         }}]);
         }
         // {
