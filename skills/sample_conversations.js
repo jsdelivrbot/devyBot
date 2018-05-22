@@ -11,8 +11,10 @@ through the conversation are chosen based on the user's response.
 
 module.exports = function(controller) {
 
-    controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
+  // addFiles intent
+    controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
 
+      // 
         bot.startConversation(message, function(err, convo) {
           
         
