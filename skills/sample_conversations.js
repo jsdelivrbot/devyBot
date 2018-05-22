@@ -63,50 +63,38 @@ module.exports = function(controller) {
                 convo.say();
                 convo.next();
                 // review single files
-                var actions = [];
+                var attachments = [];
                 for (let i in fileNames) {
-                  actions.push(
-                    {
-                        "name":"yes",
+                  attachments.push({
+                    text: fileNames[i],
+                    attachment_type: 'default',
+                    actions: [{
+                        "name":i,
                         "text": "Remove",
                         "value": "yes",
                         "type": "button",
-                    }
-                  );
+                    }]
+                  });
                 }
-                convo.ask({
-                  attachments: [
-                     {
-                      title: 'Let\'s review the files then:',
-                      text: reply2,
-                       // !!! figure out this callback_id
-                      callback_id: '123',
-                      attachment_type: 'default',
-                      actions: [
-                          {
-                              "name":"yes",
-                              "text": "Yes",
-                              "value": "yes",
-                              "type": "button",
-                          },
-                          {
-                              "name":"no",
-                              "text": "No",
-                              "value": "no",
-                              "type": "button",
-                          }
-                      ]
-                }
-              ]
-        });
-        }},
-        {
-            default: true,
-            callback: function(reply, convo) {
-                // do nothing
-            }
-        }])
-      });
+                convo.ask(
+                  attachments,
+                  [{
+                    pattern:i,
+                    callback: function(reply, convo) {
+                    delete fileNames[i];
+                    convo.say(fileNames[i] + 'Removed!');
+                    convo.next();
+                   }}]);
+                  
+        }}]);
+        }
+        // {
+        //     default: true,
+        //     callback: function(reply, convo) {
+        //         // do nothing
+        //     }
+        // }])
+      );
       
 //       if (
 //         bot.startConversation(message, function(err, convo) {
