@@ -69,15 +69,15 @@ module.exports = function(controller) {
                     attachment_type: 'default',
                     callback_id: '123',
                     actions: [{
-                        "name":i.toString(),
+                        "name": i.toString(),
                         "text": "Remove",
-                        "value":i.toString(),
+                        "value": i.toString(),
                         "type": "button",
                     }]
-                  });
+                  }); 
                   patterns.push(
                     {
-                    pattern:i.toString(),
+                    pattern: i.toString(),
                     callback: function(reply, convo) {
                     delete fileNames[i];
                     convo.say(fileNames[i] + ' is removed from the adding list!');
