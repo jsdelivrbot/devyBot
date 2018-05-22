@@ -63,6 +63,31 @@ module.exports = function(controller) {
                 convo.say('Let\'s review the files then:');
                 convo.next();
                 // DO SOMETHING
+              convo.ask({
+                  attachments: [
+                 {
+                  title: reply1,
+                  text: reply2,
+            // !!! figure out this callback_id
+                callback_id: '123',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name":"yes",
+                        "text": "Yes",
+                        "value": "yes",
+                        "type": "button",
+                    },
+                    {
+                        "name":"no",
+                        "text": "No",
+                        "value": "no",
+                        "type": "button",
+                    }
+                ]
+          }
+        ]
+        }
             }
         },
         {
