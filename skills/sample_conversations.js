@@ -15,15 +15,60 @@ module.exports = function(controller) {
     controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
 
       // reply should be received from back-end
-      var reply = "OK, I've added the following files:";
+      var reply = 'Would you like me to add the following files?';
       var fileNames = [];
       fileNames.push('example1.js');
       fileNames.push('example2.js');
+      for (let i of fileNames) {
+        reply.append('\n');
+        reply.append(i);
+      }
       bot.startConversation(message, function(err, convo) {
-        convo.say(reply);
-        for (let i of fileNames) { 
-          convo.say(i);
-        }
+        convo.ask({
+        attachments: [
+          {
+            title: ,
+            // !!! figure out this callback_id
+                callback_id: '123',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name":"yes",
+                        "text": "Yes",
+                        "value": "yes",
+                        "type": "button",
+                    },
+                    {
+                        "name":"no",
+                        "text": "No",
+                        "value": "no",
+                        "type": "button",
+                    }
+                ]
+          }
+        ]
+        },[
+          {
+            pattern: "yes",
+            callback: function(reply, convo) {
+                convo.say('Done!');
+                convo.next();
+            }
+        },
+        {
+            pattern: "no",
+            callback: function(reply, convo) {
+                convo.say('Let\'s review the files then:');
+                convo.next();
+                // DO SOMETHING
+            }
+        },
+        {
+            default: true,
+            callback: function(reply, convo) {
+                // do nothing
+            }
+        }])
       });
       
 //       if (
