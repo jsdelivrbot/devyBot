@@ -60,36 +60,46 @@ module.exports = function(controller) {
         {
             pattern: "no",
             callback: function(reply, convo) {
-                convo.say('Let\'s review the files then:');
+                convo.say();
                 convo.next();
-                // DO SOMETHING
-              convo.ask({
-                  attachments: [
-                 {
-                  title: reply1,
-                  text: reply2,
-            // !!! figure out this callback_id
-                callback_id: '123',
-                attachment_type: 'default',
-                actions: [
+                // review single files
+                var actions = [];
+                for (let i in fileNames) {
+                  actions.push(
                     {
                         "name":"yes",
-                        "text": "Yes",
+                        "text": "Remove",
                         "value": "yes",
                         "type": "button",
-                    },
-                    {
-                        "name":"no",
-                        "text": "No",
-                        "value": "no",
-                        "type": "button",
                     }
-                ]
-          }
-        ]
-        }
-            }
-        },
+                  );
+                }
+                convo.ask({
+                  attachments: [
+                     {
+                      title: 'Let\'s review the files then:',
+                      text: reply2,
+                       // !!! figure out this callback_id
+                      callback_id: '123',
+                      attachment_type: 'default',
+                      actions: [
+                          {
+                              "name":"yes",
+                              "text": "Yes",
+                              "value": "yes",
+                              "type": "button",
+                          },
+                          {
+                              "name":"no",
+                              "text": "No",
+                              "value": "no",
+                              "type": "button",
+                          }
+                      ]
+                }
+              ]
+        });
+        }},
         {
             default: true,
             callback: function(reply, convo) {
