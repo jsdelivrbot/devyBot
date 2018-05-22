@@ -15,19 +15,21 @@ module.exports = function(controller) {
     controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
 
       // reply should be received from back-end
-      var reply = 'Would you like me to add the following files?';
+      var reply1 = 'Would you like me to add the following files?';
+      var reply2 = '';
       var fileNames = [];
       fileNames.push('example1.js');
       fileNames.push('example2.js');
       for (let i of fileNames) {
-        reply.append('\n');
-        reply.append(i);
+        reply2 = reply2.concat('\n');
+        reply2 = reply2.concat(i);
       }
       bot.startConversation(message, function(err, convo) {
         convo.ask({
         attachments: [
           {
-            title: ,
+            title: reply1,
+            text: reply2,
             // !!! figure out this callback_id
                 callback_id: '123',
                 attachment_type: 'default',
