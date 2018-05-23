@@ -17,7 +17,7 @@ function addFiles(bot, message, fileNames) {
     });
     return;
   } 
-      var reply_1 = 'Would you like me to add the following '+fileNames.length.toString()+'file(s)?';
+      var reply_1 = 'Would you like me to add the following '+fileNames.length.toString()+' file(s)?';
       var reply_2 = '';
       for (let i in fileNames) {
         reply_2 = reply_2.concat('\n');
@@ -93,7 +93,7 @@ function addFiles(bot, message, fileNames) {
                     convo.say(fileNames[i] + ' is removed from the adding list!');
                     // delete fileNames[i];
                     fileNames.splice(i,1);
-                    convo.next();
+                    convo.next(); 
                     addFiles(bot, message, fileNames);
                    }});
                 }
@@ -121,8 +121,61 @@ module.exports = function(controller) {
         // addFiles intent
       addFiles(bot, message, fileNames);
     });
-
+  
     controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
+        bot.createConversation(message, function(err, convo) {
+           var number = 0;
+          switch (number) {
+            case 0:
+              // Done
+              convo.say('Ok, I\'ve committed your files.');
+              break;
+            case 1:
+              // CommitUntracked
+              convo.ask({
+                attachments: [
+                  {text:
+                '"There are no tracked changes but there are untracked files. Should I commit them?"',
+                   callback_id: 'Commit',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name":"yas",
+                        "text": "Yes",
+                        "value": "yes",
+                        "type": "button",
+                    },
+                    {
+                        "name":"no",
+                        "text": "No",
+                        "value": "no",
+                        "type": "button",
+                    },
+                    {
+                        "name":"cancel",
+                        "text": "Cancel",
+                        "value": "cancel",
+                        "type": "button",
+                    }
+                ]
+                  }]);
+              break;
+            case 0:
+              // Done
+              convo.say('Ok, I've committed your files.');
+              break;
+            case 0:
+              // Done
+              convo.say('Ok, I've committed your files.');
+              break;
+            default:
+              break;
+                        }
+        })
+    })
+
+
+    controller.hears(['some question?'], 'direct_message,direct_mention', function(bot, message) {
 
         // commit intent
         bot.createConversation(message, function(err, convo) {
