@@ -20,6 +20,7 @@ module.exports = function(controller) {
       var fileNames = [];
       fileNames.push('example1.js');
       fileNames.push('example2.js');
+      fileNames.push('example3.js');
       for (let i of fileNames) {
         reply2 = reply2.concat('\n');
         reply2 = reply2.concat(i);
@@ -53,6 +54,7 @@ module.exports = function(controller) {
           {
             pattern: "yes",
             callback: function(reply, convo) {
+                // !!! actually add files
                 convo.say('Done!');
                 convo.next();
             }
@@ -67,7 +69,7 @@ module.exports = function(controller) {
                   attachments.push({
                     text: fileNames[i],
                     attachment_type: 'default',
-                    callback_id: '12',
+                    callback_id: '123',
                     actions: [{
                         "name": i.toString(),
                         "text": "Remove",
@@ -75,14 +77,12 @@ module.exports = function(controller) {
                         "type": "button",
                     }]
                   }); 
-                  patterns.push(
-                    {
+                  patterns.push({
                     pattern: i.toString(),
-                    callback: function(reply, convo) {
+                    callback: function(reply2, convo2) {
                     delete fileNames[i];
-                    convo.say(fileNames[i] + ' is removed from the adding list!');
-                   }}
-                  );
+                    convo2.say(fileNames[i] + ' is removed from the adding list!');
+                   }});
                 }
                convo.say('Let\'s review the files then:');
               let attachments_object = {};
@@ -90,7 +90,7 @@ module.exports = function(controller) {
                convo.ask(
                   attachments_object,
                   patterns);
-               convo.next();
+               convo.say(fileNames[0]);
         }}]);
         }
         // {
