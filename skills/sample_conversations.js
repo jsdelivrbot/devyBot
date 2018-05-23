@@ -12,10 +12,9 @@ through the conversation are chosen based on the user's response.
 function addFiles(bot, message, fileNames) {
       var reply_1 = 'Would you like me to add the following files?';
       var reply_2 = '';
-      let l = fileNames.length;
-      for (let i = 0; i<l; i++) {
+      for (let i in fileNames) {
         reply_2 = reply_2.concat('\n');
-        reply_2 = reply_2.concat(i);
+        reply_2 = reply_2.concat(fileNames[i]);
       }
   bot.startConversation(message, function(err, convo) {
         convo.ask({
@@ -73,9 +72,6 @@ function addFiles(bot, message, fileNames) {
                     callback: function(reply, convo2) {
                     convo2.say(fileNames[i] + ' is removed from the adding list!');
                     delete fileNames[i];
-                    for (let j in fileNames) {
-                      convo2.say(fileNames[j] + " is one of the files.");
-                    }
                     convo2.next();
                     addFiles(bot, message, fileNames);
                    }});
