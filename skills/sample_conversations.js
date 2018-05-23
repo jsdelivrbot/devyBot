@@ -9,28 +9,20 @@ through the conversation are chosen based on the user's response.
 
 */
 
-module.exports = function(controller) {
-
-  // addFiles intent
-    controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
-
-      // reply should be received from back-end
-      var reply1 = 'Would you like me to add the following files?';
-      var reply2 = '';
-      var fileNames = [];
-      fileNames.push('example1.js');
-      fileNames.push('example2.js');
-      fileNames.push('example3.js');
-      for (let i of fileNames) {
-        reply2 = reply2.concat('\n');
-        reply2 = reply2.concat(i);
+function addFiles(bot, message, fileNames) {
+      var reply_1 = 'Would you like me to add the following files?';
+      var reply_2 = '';
+      let l = fileNames.length;
+      for (let i = 0; i<l; i++) {
+        reply_2 = reply_2.concat('\n');
+        reply_2 = reply_2.concat(i);
       }
-      bot.startConversation(message, function(err, convo) {
+  bot.startConversation(message, function(err, convo) {
         convo.ask({
         attachments: [
           {
-            title: reply1,
-            text: reply2,
+            title: reply_1,
+            text: reply_2,
             // !!! figure out this callback_id
                 callback_id: '123',
                 attachment_type: 'default',
@@ -82,9 +74,10 @@ module.exports = function(controller) {
                     convo2.say(fileNames[i] + ' is removed from the adding list!');
                     delete fileNames[i];
                     for (let j in fileNames) {
-                      convo.say(fileNames[j] + " is one of the files.");
+                      convo2.say(fileNames[j] + " is one of the files.");
                     }
                     convo2.next();
+                    addFiles(bot, message, fileNames);
                    }});
                 }
                convo.say('Let\'s review the files then:');
@@ -95,14 +88,30 @@ module.exports = function(controller) {
                   patterns);
                convo.next();
         }}]);
-        }
+    });
+}
+
+module.exports = function(controller) {
+  
+  // addFiles intent
+  
+  var fileNames = [];
+  fileNames.push('example1.js');
+  fileNames.push('example2.js');
+  fileNames.push('example3.js');
+  
+    controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
+
+      addFiles(bot, message, fileNames);
+      // reply should be received from back-end
+      
+      
         // {
         //     default: true,
         //     callback: function(reply, convo) {
         //         // do nothing
         //     }
         // }])
-      );
       
 //       if (
 //         bot.startConversation(message, function(err, convo) {
