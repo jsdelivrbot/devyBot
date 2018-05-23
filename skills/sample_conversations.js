@@ -45,7 +45,7 @@ function addFiles(bot, message, fileNames) {
           {
             pattern: "yes",
             callback: function(reply, convo) {
-                convo.say('Done!');
+                convo.say('OK, I\'ve added your files.');
                 convo.next();
             }
         },
