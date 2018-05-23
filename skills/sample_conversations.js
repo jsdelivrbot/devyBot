@@ -136,11 +136,11 @@ module.exports = function(controller) {
                 attachments: [
                   {text:
                 '"There are no tracked changes but there are untracked files. Should I commit them?"',
-                   callback_id: 'Commit',
+                   callback_id: 'CommitUntracked',
                 attachment_type: 'default',
                 actions: [
                     {
-                        "name":"yas",
+                        "name":"yes",
                         "text": "Yes",
                         "value": "yes",
                         "type": "button",
@@ -150,23 +150,32 @@ module.exports = function(controller) {
                         "text": "No",
                         "value": "no",
                         "type": "button",
-                    },
-                    {
-                        "name":"cancel",
-                        "text": "Cancel",
-                        "value": "cancel",
-                        "type": "button",
                     }
                 ]
-                  }]);
+                  }]},
+                       [{
+                         // and then commit the files?
+                         pattern: "yes",
+                         callback: function(reply, convo){
+                            convo.say('Ok, I\'ve committed your files.');
+                            convo.next();
+                         }},
+                        {
+                          // and then not commit anything?
+                         pattern: "no",
+                         callback: function(reply, convo){
+                            convo.say('There is nothing to commit.');
+                            convo.next();
+                         }}
+                       ]);
               break;
             case 0:
               // Done
-              convo.say('Ok, I've committed your files.');
+              convo.say('Ok, I\'ve committed your files.');
               break;
             case 0:
               // Done
-              convo.say('Ok, I've committed your files.');
+              convo.say('Ok, I\'ve committed your files.');
               break;
             default:
               break;
