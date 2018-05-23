@@ -54,7 +54,6 @@ module.exports = function(controller) {
           {
             pattern: "yes",
             callback: function(reply, convo) {
-                // !!! actually add files
                 convo.say('Done!');
                 convo.next();
             }
@@ -79,9 +78,13 @@ module.exports = function(controller) {
                   }); 
                   patterns.push({
                     pattern: i.toString(),
-                    callback: function(reply, convo) {
+                    callback: function(reply, convo2) {
+                    convo2.say(fileNames[i] + ' is removed from the adding list!');
                     delete fileNames[i];
-                    convo.say(fileNames[i] + ' is removed from the adding list!');
+                    for (let j in fileNames) {
+                      convo.say(fileNames[j] + " is one of the files.");
+                    }
+                    convo2.next();
                    }});
                 }
                convo.say('Let\'s review the files then:');
@@ -90,8 +93,7 @@ module.exports = function(controller) {
                convo.ask(
                   attachments_object,
                   patterns);
-              
-               // convo.say(fileNames[0]);
+               convo.next();
         }}]);
         }
         // {
