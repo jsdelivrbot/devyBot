@@ -10,7 +10,10 @@ through the conversation are chosen based on the user's response.
 */
 
 function addFiles(bot, message, fileNames) {
-      var reply_1 = 'Would you like me to add the following files?';
+  if (fileNames.length == 0) {
+    bot.reply('There were no untracked files to add.');
+  } else {
+      var reply_1 = 'Would you like me to add the following files?'+fileNames.length.toString();
       var reply_2 = '';
       for (let i in fileNames) {
         reply_2 = reply_2.concat('\n');
@@ -85,7 +88,7 @@ function addFiles(bot, message, fileNames) {
                convo.next();
         }}]);
     });
-}
+}}
 
 module.exports = function(controller) {
   
@@ -97,34 +100,13 @@ module.exports = function(controller) {
   fileNames.push('example3.js');
   
     controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
-
+        // addFiles intent
       addFiles(bot, message, fileNames);
-      // reply should be received from back-end
-      
-      
-        // {
-        //     default: true,
-        //     callback: function(reply, convo) {
-        //         // do nothing
-        //     }
-        // }])
-      
-//       if (
-//         bot.startConversation(message, function(err, convo) {
-          
-        
-//             convo.ask('What is your favorite color?', function(response, convo) {
-
-//                 convo.say('Cool, I like ' + response.text + ' too!');
-//                 convo.next();
-
-//             });
     });
-    
-
 
     controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
 
+        // commit intent
         bot.createConversation(message, function(err, convo) {
           
             // create a path for when a user says YES
