@@ -11,9 +11,13 @@ through the conversation are chosen based on the user's response.
 
 function addFiles(bot, message, fileNames) {
   if (fileNames.length == 0) {
-    bot.reply('There were no untracked files to add.');
-  } else {
-      var reply_1 = 'Would you like me to add the following files?'+fileNames.length.toString();
+    bot.startConversation(message, function(err, convo) {
+        convo.say('There were no untracked files to add.');
+        convo.next();
+    });
+    return;
+  } 
+      var reply_1 = 'Would you like me to add the following '+fileNames.length.toString()+'file(s)?';
       var reply_2 = '';
       for (let i in fileNames) {
         reply_2 = reply_2.concat('\n');
@@ -40,6 +44,12 @@ function addFiles(bot, message, fileNames) {
                         "text": "No",
                         "value": "no",
                         "type": "button",
+                    },
+                    {
+                        "name":"cancel",
+                        "text": "Cancel",
+                        "value": "cancel",
+                        "type": "button",
                     }
                 ]
           }
@@ -49,6 +59,13 @@ function addFiles(bot, message, fileNames) {
             pattern: "yes",
             callback: function(reply, convo) {
                 convo.say('OK, I\'ve added your files.');
+                convo.next();
+            }
+        },
+          {
+            pattern: "cancel",
+            callback: function(reply, convo) {
+                convo.say('OK, action canceled!');
                 convo.next();
             }
         },
@@ -73,9 +90,10 @@ function addFiles(bot, message, fileNames) {
                   patterns.push({
                     pattern: i.toString(),
                     callback: function(reply, convo2) {
-                    convo2.say(fileNames[i] + ' is removed from the adding list!');
-                    delete fileNames[i];
-                    convo2.next();
+                    convo.say(fileNames[i] + ' is removed from the adding list!');
+                    // delete fileNames[i];
+                    fileNames.splice(i,1);
+                    convo.next();
                     addFiles(bot, message, fileNames);
                    }});
                 }
@@ -88,7 +106,7 @@ function addFiles(bot, message, fileNames) {
                convo.next();
         }}]);
     });
-}}
+}
 
 module.exports = function(controller) {
   
