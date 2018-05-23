@@ -67,7 +67,7 @@ module.exports = function(controller) {
                   attachments.push({
                     text: fileNames[i],
                     attachment_type: 'default',
-                    callback_id: '123',
+                    callback_id: '12',
                     actions: [{
                         "name": i.toString(),
                         "text": "Remove",
