@@ -1,6 +1,6 @@
 /* conversation.js */
 'use strict';
-const ConversationV1 = require('gateway.watsonplatform.net/assistant/api');
+const ConversationV1 = require('botkit-middleware-watson');
 // new instance of Conversation
 const conversation = new ConversationV1({
   username: process.env.CONVERSATION_USERNAME,
