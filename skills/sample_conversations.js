@@ -9,32 +9,33 @@ through the conversation are chosen based on the user's response.
 
 */
 
-function addFiles(bot, message, fileNames) {
-  if (fileNames.length == 0) {
-    bot.startConversation(message, function(err, convo) {
-        convo.say('There were no untracked files to add.');
-        convo.next();
-    });
-    return;
-  } 
-      var reply_1 = 'Would you like me to add the following '+fileNames.length.toString()+' file(s)?';
-      var reply_2 = '';
-      for (let i in fileNames) {
-        reply_2 = reply_2.concat('\n');
-        reply_2 = reply_2.concat(fileNames[i]);
+module.exports = function(controller) {
+
+  // addFiles intent
+    controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
+
+      // reply should be received from back-end
+      var reply1 = 'Would you like me to add the following files?';
+      var reply2 = '';
+      var fileNames = [];
+      fileNames.push('example1.js');
+      fileNames.push('example2.js');
+      for (let i of fileNames) {
+        reply2 = reply2.concat('\n');
+        reply2 = reply2.concat(i);
       }
-  bot.startConversation(message, function(err, convo) {
+      bot.startConversation(message, function(err, convo) {
         convo.ask({
         attachments: [
           {
-            title: reply_1,
-            text: reply_2,
+            title: reply1,
+            text: reply2,
             // !!! figure out this callback_id
                 callback_id: '123',
                 attachment_type: 'default',
                 actions: [
                     {
-                        "name":"yas",
+                        "name":"yes",
                         "text": "Yes",
                         "value": "yes",
                         "type": "button",
@@ -44,12 +45,6 @@ function addFiles(bot, message, fileNames) {
                         "text": "No",
                         "value": "no",
                         "type": "button",
-                    },
-                    {
-                        "name":"cancel",
-                        "text": "Cancel",
-                        "value": "cancel",
-                        "type": "button",
                     }
                 ]
           }
@@ -58,136 +53,55 @@ function addFiles(bot, message, fileNames) {
           {
             pattern: "yes",
             callback: function(reply, convo) {
-              // !!! 
-                convo.say('OK, I\'ve added your files.');
-                convo.next();
-            }
-        },
-          {
-            pattern: "cancel",
-            callback: function(reply, convo) {
-                convo.say('OK, action canceled!');
+                convo.say('Done!');
                 convo.next();
             }
         },
         {
             pattern: "no",
             callback: function(reply, convo) {
-                // review single files
-                var attachments = [];
-                var patterns = [];
-                for (let i in fileNames) {
-                  attachments.push({
-                    text: fileNames[i],
-                    attachment_type: 'default',
-                    callback_id: '123',
-                    actions: [{
-                        "name": i.toString(),
-                        "text": "Remove",
-                        "value": i.toString(),
+                convo.say('Let\'s review the files then:');
+                convo.next();
+                // DO SOMETHING
+              convo.ask({
+                  attachments: [
+                 {
+                  title: reply1,
+                  text: reply2,
+            // !!! figure out this callback_id
+                callback_id: '123',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name":"yes",
+                        "text": "Yes",
+                        "value": "yes",
                         "type": "button",
-                    }]
-                  }); 
-                  patterns.push({
-                    pattern: i.toString(),
-                    callback: function(reply, convo2) {
-                    convo.say(fileNames[i] + ' is removed from the adding list!');
-                    // delete fileNames[i];
-                    fileNames.splice(i,1);
-                    convo.next(); 
-                    addFiles(bot, message, fileNames);
-                   }});
-                }
-               convo.say('Let\'s review the files then:');
-              let attachments_object = {};
-              attachments_object.attachments = attachments;
-               convo.ask(
-                  attachments_object,
-                  patterns);
-               convo.next();
-        }}]);
+                    },
+                    {
+                        "name":"no",
+                        "text": "No",
+                        "value": "no",
+                        "type": "button",
+                    }
+                ]
+          }
+        ]
+        })   
+        }},
+        {
+            default: true,
+            callback: function(reply, convo) {
+                // do nothing
+            }
+        }])
+      });
     });
-}
-
-module.exports = function(controller) {
-  
-  // addFiles intent
-  
-  var fileNames = [];
-  fileNames.push('example1.js');
-  fileNames.push('example2.js');
-  fileNames.push('example3.js');
-  
-    controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
-        // addFiles intent
-      addFiles(bot, message, fileNames);
-    });
-  
-    // controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
-    //     bot.createConversation(message, function(err, convo) {
-    //        var number = 0;
-    //       switch (number) {
-    //         case 0:
-    //           // Done
-    //           convo.say('Ok, I\'ve committed your files.');
-    //           break;
-    //         case 1:
-    //           // CommitUntracked
-    //           convo.ask({
-    //             attachments: [
-    //               {text:
-    //             '"There are no tracked changes but there are untracked files. Should I commit them?"',
-    //                callback_id: 'CommitUntracked',
-    //             attachment_type: 'default',
-    //             actions: [
-    //                 {
-    //                     "name":"yes",
-    //                     "text": "Yes",
-    //                     "value": "yes",
-    //                     "type": "button",
-    //                 },
-    //                 {
-    //                     "name":"no",
-    //                     "text": "No",
-    //                     "value": "no",
-    //                     "type": "button",
-    //                 }
-    //             ]
-    //               }]},
-    //                    [{
-    //                      // and then commit the files?
-    //                      pattern: "yes",
-    //                      callback: function(reply, convo){
-    //                         convo.say('Ok, I\'ve committed your files.');
-    //                         convo.next();
-    //                      }},
-    //                     {
-    //                       // and then not commit anything?
-    //                      pattern: "no",
-    //                      callback: function(reply, convo){
-    //                         convo.say('There is nothing to commit.');
-    //                         convo.next();
-    //                      }}
-    //                    ]);
-    //           break;
-    //         case 0:
-    //           // Done
-    //           convo.say('Ok, I\'ve committed your files.');
-    //           break;
-    //         case 0:
-    //           // Done
-    //           convo.say('Ok, I\'ve committed your files.');
-    //           break;
-    //         default:
-    //           break;
-    //                     }
-    //     })
-    // })
+    
 
 
-    controller.hears(['some question?'], 'direct_message,direct_mention', function(bot, message) {
+    controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
 
-        // commit intent
         bot.createConversation(message, function(err, convo) {
           
             // create a path for when a user says YES
@@ -247,13 +161,4 @@ module.exports = function(controller) {
         });
 
     });
-  
-//   controller.hears(['*'], 'direct_message,direct_mention', function(bot, message) {
-    
-//     bot.createConversation(message, function(err, convo) {
-//         convo.say('default reply');
-//     });
-    
-//   });
-
 }
