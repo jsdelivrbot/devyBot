@@ -251,9 +251,9 @@ module.exports = function(controller) {
   controller.hears(['.*'], 'direct_message,direct_mention', function(bot, message) {
 
     if (message.watsonError) {
-    bot.reply(message, "I'm sorry, but for technical reasons I can't respond to your message");
+    console.log("I'm sorry, but for technical reasons I can't respond to your message");
   } else {
-    bot.reply(message, message.watsonData.output.text.join('\n'));
+    console.log("anything?"+message.watsonData.output);
   }
 
   });
