@@ -248,12 +248,12 @@ module.exports = function(controller) {
 
     });
   
-  controller.hears(['.*'], 'direct_message,direct_mention', function(bot, message) {
+//   controller.hears(['*'], 'direct_message,direct_mention', function(bot, message) {
     
-    bot.createConversation(message, function(err, convo) {
-        convo.say('default reply');
-    });
+//     bot.createConversation(message, function(err, convo) {
+//         convo.say('default reply');
+//     });
     
-  });
+//   });
 
 }
