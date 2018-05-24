@@ -123,66 +123,66 @@ module.exports = function(controller) {
       addFiles(bot, message, fileNames);
     });
   
-    controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
-        bot.createConversation(message, function(err, convo) {
-           var number = 0;
-          switch (number) {
-            case 0:
-              // Done
-              convo.say('Ok, I\'ve committed your files.');
-              break;
-            case 1:
-              // CommitUntracked
-              convo.ask({
-                attachments: [
-                  {text:
-                '"There are no tracked changes but there are untracked files. Should I commit them?"',
-                   callback_id: 'CommitUntracked',
-                attachment_type: 'default',
-                actions: [
-                    {
-                        "name":"yes",
-                        "text": "Yes",
-                        "value": "yes",
-                        "type": "button",
-                    },
-                    {
-                        "name":"no",
-                        "text": "No",
-                        "value": "no",
-                        "type": "button",
-                    }
-                ]
-                  }]},
-                       [{
-                         // and then commit the files?
-                         pattern: "yes",
-                         callback: function(reply, convo){
-                            convo.say('Ok, I\'ve committed your files.');
-                            convo.next();
-                         }},
-                        {
-                          // and then not commit anything?
-                         pattern: "no",
-                         callback: function(reply, convo){
-                            convo.say('There is nothing to commit.');
-                            convo.next();
-                         }}
-                       ]);
-              break;
-            case 0:
-              // Done
-              convo.say('Ok, I\'ve committed your files.');
-              break;
-            case 0:
-              // Done
-              convo.say('Ok, I\'ve committed your files.');
-              break;
-            default:
-              break;
-                        }
-        })
-    })
+    // controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
+    //     bot.createConversation(message, function(err, convo) {
+    //        var number = 0;
+    //       switch (number) {
+    //         case 0:
+    //           // Done
+    //           convo.say('Ok, I\'ve committed your files.');
+    //           break;
+    //         case 1:
+    //           // CommitUntracked
+    //           convo.ask({
+    //             attachments: [
+    //               {text:
+    //             '"There are no tracked changes but there are untracked files. Should I commit them?"',
+    //                callback_id: 'CommitUntracked',
+    //             attachment_type: 'default',
+    //             actions: [
+    //                 {
+    //                     "name":"yes",
+    //                     "text": "Yes",
+    //                     "value": "yes",
+    //                     "type": "button",
+    //                 },
+    //                 {
+    //                     "name":"no",
+    //                     "text": "No",
+    //                     "value": "no",
+    //                     "type": "button",
+    //                 }
+    //             ]
+    //               }]},
+    //                    [{
+    //                      // and then commit the files?
+    //                      pattern: "yes",
+    //                      callback: function(reply, convo){
+    //                         convo.say('Ok, I\'ve committed your files.');
+    //                         convo.next();
+    //                      }},
+    //                     {
+    //                       // and then not commit anything?
+    //                      pattern: "no",
+    //                      callback: function(reply, convo){
+    //                         convo.say('There is nothing to commit.');
+    //                         convo.next();
+    //                      }}
+    //                    ]);
+    //           break;
+    //         case 0:
+    //           // Done
+    //           convo.say('Ok, I\'ve committed your files.');
+    //           break;
+    //         case 0:
+    //           // Done
+    //           convo.say('Ok, I\'ve committed your files.');
+    //           break;
+    //         default:
+    //           break;
+    //                     }
+    //     })
+    // })
 
 
     controller.hears(['some question?'], 'direct_message,direct_mention', function(bot, message) {
