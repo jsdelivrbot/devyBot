@@ -250,12 +250,14 @@ module.exports = function(controller) {
 
   controller.hears(['.*'], 'direct_message,direct_mention', function(bot, message) {
 
-    if (message.watsonError) {
-    console.log("I'm sorry, but for technical reasons I can't respond to your message");
-  } else {
-    console.log("anything?"+message.watsonData.output);
-  }
-
+  //   if (message.watsonError) {
+  //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
+  // } else {
+    if (message.wastonData != "undefin
+    if (message.wastonData.intents.length == 0)
+      console.log(JSON.stringify(message.watsonData));  
+    else 
+      console.log(JSON.stringify(message.watsonData.intents[0].intent));
   });
 
 }
