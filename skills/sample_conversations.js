@@ -253,11 +253,14 @@ module.exports = function(controller) {
   //   if (message.watsonError) {
   //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
   // } else {
-    if (message.wastonData != "undefin
-    if (message.wastonData.intents.length == 0)
-      console.log(JSON.stringify(message.watsonData));  
-    else 
-      console.log(JSON.stringify(message.watsonData.intents[0].intent));
+    let intent = message.watsonData.intents;
+    console.log(JSON.stringify(intent));
+    
+    if (!intent.length) return;
+    
+    if (intent[0].intent == "vcAddFilesIntent")
+      addFiles(bot, message, fileNames);
+      
   });
 
 }
