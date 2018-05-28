@@ -255,6 +255,7 @@ module.exports = function(controller) {
   // } else {
     console.log(JSON.stringify(message.watsonData));
     let intent = message.watsonData.intents;
+    let entities = message.watsonData.entities;
     console.log(JSON.stringify(intent));
     
     if (!intent.length) return;
@@ -263,8 +264,9 @@ module.exports = function(controller) {
       addFiles(bot, message, fileNames);
     
     if (intent[0].intent == "ghStartIssueIntent") {
-      console.log(JSON.stringify(message.watsonData.in
+      console.log(JSON.stringify(entities[0].entity));
     }
+    
     
   });
 
