@@ -261,7 +261,6 @@ module.exports = function(controller) {
     
     if (intent[0].intent == "vcAddFilesIntent")
       addFiles(bot, message, fileNames);
-      
   });
 
 }
