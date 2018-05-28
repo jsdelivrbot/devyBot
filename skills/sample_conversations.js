@@ -251,7 +251,7 @@ module.exports = function(controller) {
   //   if (message.watsonError) {
   //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
   // } else {
-    // console.log(JSON.stringify(message.watsonData));
+    console.log(JSON.stringify(message.watsonData));
     
     if (message) {
     let intent = message.watsonData.intents;
