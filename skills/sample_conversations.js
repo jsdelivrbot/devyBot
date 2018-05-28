@@ -1,14 +1,12 @@
 /*
 
-WHAT IS THIS?
-
-This module demonstrates simple uses of Botkit's conversation system.
-
-In this example, Botkit hears a keyword, then asks a question. Different paths
-through the conversation are chosen based on the user's response.
+Interactive part of Devy bot. 
+Switch cases according to both intents from Watson and the context data of the user
+Mocking data only so far. Consider loading context variables as local varables first and then access in code?
 
 */
 
+//
 function addFiles(bot, message, fileNames) {
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
@@ -267,10 +265,10 @@ module.exports = function(controller) {
       let startPos = entities[0].location[0];
       let endPos = entities[0].location[1];
       let issueNum = message.text.substring(startPos,endPos);
-      bot.reply(message, " issue number " + issueNum);
+      bot.reply(message, "I've switched you to branch " + issueNum + " Let me know when you're finished.");
     }
     
-    bot.reply(message,"Waston: " + message.watsonData.output.text[0]);
+    // bot.reply(message,"Waston: " + message.watsonData.output.text[0]);
   });
 
 }
