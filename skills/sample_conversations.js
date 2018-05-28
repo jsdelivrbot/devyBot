@@ -261,6 +261,11 @@ module.exports = function(controller) {
     
     if (intent[0].intent == "vcAddFilesIntent")
       addFiles(bot, message, fileNames);
+    
+    if (intent[0].intent == "ghStartIssueIntent") {
+      console.log(JSON.stringify(message.watsonData.in
+    }
+    
   });
 
 }
