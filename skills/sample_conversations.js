@@ -264,11 +264,13 @@ module.exports = function(controller) {
       addFiles(bot, message, fileNames);
     
     if (intent[0].intent == "ghStartIssueIntent") {
-      console.log(JSON.stringify(entities[0]));
-      console.log(JSON.stringify(message.text));
+      let startPos = entities[0].location[0];
+      let endPos = entities[0].location[1];
+      let issueNum = message.text.substring(startPos,endPos);
+      bot.reply(message, " issue number " + issueNum);
     }
     
-    
+    bot.reply(message,"Waston: " + message.watsonData.output.text[0]);
   });
 
 }
