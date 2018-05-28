@@ -268,6 +268,7 @@ module.exports = function(controller) {
       bot.reply(message, "I've switched you to branch " + issueNum + " Let me know when you're finished.");
     }
     
+    
     // bot.reply(message,"Waston: " + message.watsonData.output.text[0]);
   });
 
