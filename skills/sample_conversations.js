@@ -265,8 +265,9 @@ module.exports = function(controller) {
     
     if (intent[0].intent == "ghStartIssueIntent") {
       let num_of_entities = entities.length;
-      let startPos = entities[num_of_entities].location[0];
-      let endPos = entities[num_of_entities].location[1];
+      console.log(typeof num_of_entities);
+      let startPos = entities[num_of_entities-1].location[0];
+      let endPos = entities[num_of_entities-1].location[1];
       let issueBranch = message.text.substring(startPos,endPos);
       bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
     }
