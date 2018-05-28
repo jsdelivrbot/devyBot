@@ -251,7 +251,9 @@ module.exports = function(controller) {
   //   if (message.watsonError) {
   //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
   // } else {
-    console.log(JSON.stringify(message.watsonData));
+    // console.log(JSON.stringify(message.watsonData));
+    
+    if (message) {
     let intent = message.watsonData.intents;
     let entities = message.watsonData.entities;
     console.log(JSON.stringify(intent));
@@ -262,12 +264,13 @@ module.exports = function(controller) {
       addFiles(bot, message, fileNames);
     
     if (intent[0].intent == "ghStartIssueIntent") {
-      let startPos = entities[0].location[0];
-      let endPos = entities[0].location[1];
-      let issueNum = message.text.substring(startPos,endPos);
-      bot.reply(message, "I've switched you to branch " + issueNum + " Let me know when you're finished.");
+      let num_of_entities = entities.length;
+      let startPos = entities[num_of_entities].location[0];
+      let endPos = entities[num_of_entities].location[1];
+      let issueBranch = message.text.substring(startPos,endPos);
+      bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
     }
-    
+    }
     
     // bot.reply(message,"Waston: " + message.watsonData.output.text[0]);
   });
