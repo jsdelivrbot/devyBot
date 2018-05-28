@@ -264,8 +264,7 @@ module.exports = function(controller) {
       addFiles(bot, message, fileNames);
     
     if (intent[0].intent == "ghStartIssueIntent") {
-      console.log(JSON.stringify(entities.location));
-      
+      console.log(JSON.stringify(entities[0]));
       console.log(JSON.stringify(message.text));
     }
     
