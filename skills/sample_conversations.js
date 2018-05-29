@@ -10,6 +10,12 @@ Mocking data only so far. Consider loading context variables as local varables f
 
 const minimum_confidence = 0.5;
 
+var fileNames = [];
+  fileNames.push('example1.js');
+  fileNames.push('example2.js');
+  fileNames.push('example3.js');
+
+
 function addFiles(bot, message, fileNames) {
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
@@ -114,10 +120,7 @@ module.exports = function(controller) {
 
   // addFiles intent
 
-  var fileNames = [];
-  fileNames.push('example1.js');
-  fileNames.push('example2.js');
-  fileNames.push('example3.js');
+  
 
     // controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
     //     // addFiles intent
@@ -262,12 +265,13 @@ module.exports = function(controller) {
     console.log(JSON.stringify(intents));
     
     if (!intents.length) return;
-    else handleIntent(intents[0]);
+    else handleIntent(intents[0],bot,message);
     
     }
-  }
-    
-    function handleIntent(intent) {
+  });
+}
+
+function handleIntent(intent, bot, message) {
       if (intent.confidence < minimum_confidence) {
       handleConfusion(message.text);
     }
@@ -283,9 +287,4 @@ module.exports = function(controller) {
       let issueBranch = message.text.substring(startPos,endPos);
       bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
     }
-    }
-    
-    // bot.reply(message,"Waston: " + message.watsonData.output.text[0]);
-  });
-
 }
