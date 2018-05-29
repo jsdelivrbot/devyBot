@@ -258,10 +258,8 @@ module.exports = function(controller) {
   //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
   // } else {
     console.log(JSON.stringify(message.watsonData));
-    
     if (message) {
     let intents = message.watsonData.intents;
-    let entities = message.watsonData.entities;
     console.log(JSON.stringify(intents));
     
     if (!intents.length) return;
@@ -272,8 +270,9 @@ module.exports = function(controller) {
 }
 
 function handleIntent(intent, bot, message) {
+      let entities = message.watsonData.entities;
       if (intent.confidence < minimum_confidence) {
-      handleConfusion(message.text);
+      handleConfusion(message, bot);
     }
       
     if (intent.intent == "vcAddFilesIntent")
@@ -287,4 +286,61 @@ function handleIntent(intent, bot, message) {
       let issueBranch = message.text.substring(startPos,endPos);
       bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
     }
+}
+
+function handleConfusion(message,bot) {
+    bot.startConversation(message, function(err, convo) {
+      convo.ask(
+        {
+    "text": "Would you like to play a game?",
+    "response_type": "in_channel",
+    "attachments": [
+        {
+            "text": "Choose a game to play",
+            "fallback": "If you could read this message, you'd be choosing something fun to do right now.",
+            "color": "#3AA3E3",
+            "attachment_type": "default",
+            "callback_id": "game_selection",
+            "actions": [
+                {
+                    "name": "games_list",
+                    "text": "Pick a game...",
+                    "type": "select",
+                    "options": [
+                        {
+                            "text": "Hearts",
+                            "value": "hearts"
+                        },
+                        {
+                            "text": "Bridge",
+                            "value": "bridge"
+                        },
+                        {
+                            "text": "Checkers",
+                            "value": "checkers"
+                        },
+                        {
+                            "text": "Chess",
+                            "value": "chess"
+                        },
+                        {
+                            "text": "Poker",
+                            "value": "poker"
+                        },
+                        {
+                            "text": "Falken's Maze",
+                            "value": "maze"
+                        },
+                        {
+                            "text": "Global Thermonuclear War",
+                            "value": "war"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+      ); 
+    })
 }
