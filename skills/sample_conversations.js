@@ -16,105 +16,7 @@ var fileNames = [];
   fileNames.push('example3.js');
 
 
-function addFiles(bot, message, fileNames) {
-  if (fileNames.length == 0) {
-    bot.startConversation(message, function(err, convo) {
-        convo.say('There were no untracked files to add.');
-        convo.next();
-    });
-    return;
-  }
-      var reply_1 = 'Would you like me to add the following '+fileNames.length.toString()+' file(s)?';
-      var reply_2 = '';
-      for (let i in fileNames) {
-        reply_2 = reply_2.concat('\n');
-        reply_2 = reply_2.concat(fileNames[i]);
-      }
-  bot.startConversation(message, function(err, convo) {
-        convo.ask({
-        attachments: [
-          {
-            title: reply_1,
-            text: reply_2,
-            // !!! figure out this callback_id
-                callback_id: '123',
-                attachment_type: 'default',
-                actions: [
-                    {
-                        "name":"yas",
-                        "text": "Yes",
-                        "value": "yes",
-                        "type": "button",
-                    },
-                    {
-                        "name":"no",
-                        "text": "No",
-                        "value": "no",
-                        "type": "button",
-                    },
-                    {
-                        "name":"cancel",
-                        "text": "Cancel",
-                        "value": "cancel",
-                        "type": "button",
-                    }
-                ]
-          }
-        ]
-        },[
-          {
-            pattern: "yes",
-            callback: function(reply, convo) {
-              // !!!
-                convo.say('OK, I\'ve added your files.');
-                convo.next();
-            }
-        },
-          {
-            pattern: "cancel",
-            callback: function(reply, convo) {
-                convo.say('OK, action canceled!');
-                convo.next();
-            }
-        },
-        {
-            pattern: "no",
-            callback: function(reply, convo) {
-                // review single files
-                var attachments = [];
-                var patterns = [];
-                for (let i in fileNames) {
-                  attachments.push({
-                    text: fileNames[i],
-                    attachment_type: 'default',
-                    callback_id: '123',
-                    actions: [{
-                        "name": i.toString(),
-                        "text": "Remove",
-                        "value": i.toString(),
-                        "type": "button",
-                    }]
-                  });
-                  patterns.push({
-                    pattern: i.toString(),
-                    callback: function(reply, convo2) {
-                    convo.say(fileNames[i] + ' is removed from the adding list!');
-                    // delete fileNames[i];
-                    fileNames.splice(i,1);
-                    convo.next();
-                    addFiles(bot, message, fileNames);
-                   }});
-                }
-               convo.say('Let\'s review the files then:');
-              let attachments_object = {};
-              attachments_object.attachments = attachments;
-               convo.ask(
-                  attachments_object,
-                  patterns);
-               convo.next();
-        }}]);
-    });
-}
+
 
 module.exports = function(controller) {
 
@@ -340,7 +242,117 @@ function handleConfusion(message,bot) {
             ]
         }
     ]
-}
+},[
+  {
+            pattern: "addFile",
+            callback: function(reply, convo) {
+              // !!!
+              addFiles(bot, message, fileNames);
+              convo.next();
+            }
+  }
+]
       ); 
     })
+}
+  
+  
+function addFiles(bot, message, fileNames) {
+  if (fileNames.length == 0) {
+    bot.startConversation(message, function(err, convo) {
+        convo.say('There were no untracked files to add.');
+        convo.next();
+    });
+    return;
+  }
+      var reply_1 = 'Would you like me to add the following '+fileNames.length.toString()+' file(s)?';
+      var reply_2 = '';
+      for (let i in fileNames) {
+        reply_2 = reply_2.concat('\n');
+        reply_2 = reply_2.concat(fileNames[i]);
+      }
+  bot.startConversation(message, function(err, convo) {
+        convo.ask({
+        attachments: [
+          {
+            title: reply_1,
+            text: reply_2,
+            // !!! figure out this callback_id
+                callback_id: '123',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name":"yas",
+                        "text": "Yes",
+                        "value": "yes",
+                        "type": "button",
+                    },
+                    {
+                        "name":"no",
+                        "text": "No",
+                        "value": "no",
+                        "type": "button",
+                    },
+                    {
+                        "name":"cancel",
+                        "text": "Cancel",
+                        "value": "cancel",
+                        "type": "button",
+                    }
+                ]
+          }
+        ]
+        },[
+          {
+            pattern: "yes",
+            callback: function(reply, convo) {
+              // !!!
+                convo.say('OK, I\'ve added your files.');
+                convo.next();
+            }
+        },
+          {
+            pattern: "cancel",
+            callback: function(reply, convo) {
+                convo.say('OK, action canceled!');
+                convo.next();
+            }
+        },
+        {
+            pattern: "no",
+            callback: function(reply, convo) {
+                // review single files
+                var attachments = [];
+                var patterns = [];
+                for (let i in fileNames) {
+                  attachments.push({
+                    text: fileNames[i],
+                    attachment_type: 'default',
+                    callback_id: '123',
+                    actions: [{
+                        "name": i.toString(),
+                        "text": "Remove",
+                        "value": i.toString(),
+                        "type": "button",
+                    }]
+                  });
+                  patterns.push({
+                    pattern: i.toString(),
+                    callback: function(reply, convo2) {
+                    convo.say(fileNames[i] + ' is removed from the adding list!');
+                    // delete fileNames[i];
+                    fileNames.splice(i,1);
+                    convo.next();
+                    addFiles(bot, message, fileNames);
+                   }});
+                }
+               convo.say('Let\'s review the files then:');
+              let attachments_object = {};
+              attachments_object.attachments = attachments;
+               convo.ask(
+                  attachments_object,
+                  patterns);
+               convo.next();
+        }}]);
+    });
 }
