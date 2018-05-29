@@ -8,7 +8,7 @@ Mocking data only so far. Consider loading context variables as local varables f
 
 //
 
-import 
+const minimum_confidence = 0.5;
 
 function addFiles(bot, message, fileNames) {
   if (fileNames.length == 0) {
@@ -262,15 +262,20 @@ module.exports = function(controller) {
     console.log(JSON.stringify(intents));
     
     if (!intents.length) return;
+    else handleIntent(intents[0]);
     
-    if (intents[0].confidence < minimum_confidence) {
-      
+    }
+  }
+    
+    function handleIntent(intent) {
+      if (intent.confidence < minimum_confidence) {
+      handleConfusion(message.text);
     }
       
-    if (intents[0].intent == "vcAddFilesIntent")
+    if (intent.intent == "vcAddFilesIntent")
       addFiles(bot, message, fileNames);
     
-    if (intents[0].intent == "ghStartIssueIntent") {
+    if (intent.intent == "ghStartIssueIntent") {
       let num_of_entities = entities.length;
       console.log(typeof num_of_entities);
       let startPos = entities[num_of_entities-1].location[0];
