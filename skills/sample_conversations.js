@@ -7,6 +7,9 @@ Mocking data only so far. Consider loading context variables as local varables f
 */
 
 //
+
+import 
+
 function addFiles(bot, message, fileNames) {
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
@@ -254,16 +257,20 @@ module.exports = function(controller) {
     console.log(JSON.stringify(message.watsonData));
     
     if (message) {
-    let intent = message.watsonData.intents;
+    let intents = message.watsonData.intents;
     let entities = message.watsonData.entities;
-    console.log(JSON.stringify(intent));
+    console.log(JSON.stringify(intents));
     
-    if (!intent.length) return;
+    if (!intents.length) return;
     
-    if (intent[0].intent == "vcAddFilesIntent")
+    if (intents[0].confidence < minimum_confidence) {
+      
+    }
+      
+    if (intents[0].intent == "vcAddFilesIntent")
       addFiles(bot, message, fileNames);
     
-    if (intent[0].intent == "ghStartIssueIntent") {
+    if (intents[0].intent == "ghStartIssueIntent") {
       let num_of_entities = entities.length;
       console.log(typeof num_of_entities);
       let startPos = entities[num_of_entities-1].location[0];
