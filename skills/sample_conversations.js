@@ -324,16 +324,16 @@ function handleConfusion(message,bot) {
                             "value": "ownerOfFile"
                         },
                         {
-                            "text": "Add my ",
-                            "value": "poker"
+                            "text": "Add my files",
+                            "value": "addFile"
                         },
                         {
-                            "text": "Falken's Maze",
-                            "value": "maze"
+                            "text": "Get the current branch",
+                            "value": "getCurrentBranch"
                         },
                         {
-                            "text": "Global Thermonuclear War",
-                            "value": "war"
+                            "text": "Start working on an issue",
+                            "value": "startOnIssue"
                         }
                     ]
                 }
