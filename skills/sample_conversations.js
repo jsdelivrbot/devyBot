@@ -292,39 +292,39 @@ function handleConfusion(message,bot) {
     bot.startConversation(message, function(err, convo) {
       convo.ask(
         {
-    "text": "Would you like to play a game?",
+    "text": "I don't understand what you mean.",
     "response_type": "in_channel",
     "attachments": [
         {
-            "text": "Choose a game to play",
+            "text": "Do you mean...",
             "fallback": "If you could read this message, you'd be choosing something fun to do right now.",
-            "color": "#3AA3E3",
+            // "color": "#3AA3E3",
             "attachment_type": "default",
-            "callback_id": "game_selection",
+            "callback_id": "handleConfusionCallback",
             "actions": [
                 {
-                    "name": "games_list",
-                    "text": "Pick a game...",
+                    "name": "intentList",
+                    "text": "Pick an intent...",
                     "type": "select",
                     "options": [
                         {
-                            "text": "Hearts",
-                            "value": "hearts"
+                            "text": "Push code to git",
+                            "value": "push"
                         },
                         {
-                            "text": "Bridge",
-                            "value": "bridge"
+                            "text": "Commit code",
+                            "value": "commit"
                         },
                         {
-                            "text": "Checkers",
-                            "value": "checkers"
+                            "text": "Pull code from git",
+                            "value": "pull"
                         },
                         {
-                            "text": "Chess",
-                            "value": "chess"
+                            "text": "Get the owner of the file",
+                            "value": "ownerOfFile"
                         },
                         {
-                            "text": "Poker",
+                            "text": "Add my ",
                             "value": "poker"
                         },
                         {
