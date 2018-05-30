@@ -27,14 +27,15 @@ function createExample(intent, example, description=null){
   var params = {
   workspace_id: process.env.WORKSPACE_ID,
   intent: intent,
-  new_examples: [
-    {
-      text: example
-    }
-  ],
-  new_description: description
+  text: example
 };
-  conversation.create_example(process.env.WORKSPACE_ID, intent, example);
+  conversation.createExample(params, function(err, response) {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(JSON.stringify(response, null, 2));
+  } 
+});
 }
 
 
@@ -267,6 +268,7 @@ function handleConfusion(message,bot) {
             pattern: "addFile",
             callback: function(reply, convo) {
               // !!!
+              convo.say("Noted and new example created!");
               console.log(message.text);
               createExample("vcAddFilesIntent", message.text, "testing!!!");
               addFiles(bot, message, fileNames);
