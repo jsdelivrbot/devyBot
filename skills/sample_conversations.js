@@ -23,7 +23,7 @@ var conversation = new watson.ConversationV1({
   version_date: '2018-05-30',
 });
 
-function updateIntent(intent, example, description=null){
+function createExample(intent, example, description=null){
   var params = {
   workspace_id: process.env.WORKSPACE_ID,
   intent: intent,
@@ -34,13 +34,7 @@ function updateIntent(intent, example, description=null){
   ],
   new_description: description
 };
-  conversation.updateIntent(params, function(err, response) {
-  if (err) {
-    console.error(err);
-  } else {
-    console.log(JSON.stringify(response, null, 2));
-  }
-});
+  conversation.create_example(process.env.WORKSPACE_ID, intent, example);
 }
 
 
@@ -274,7 +268,7 @@ function handleConfusion(message,bot) {
             callback: function(reply, convo) {
               // !!!
               console.log(message.text);
-              updateIntent("vcAddFilesIntent", message.text, "testing!!!");
+              createExample("vcAddFilesIntent", message.text, "testing!!!");
               addFiles(bot, message, fileNames);
               convo.next();
             }
