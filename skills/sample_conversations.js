@@ -20,7 +20,7 @@ var conversation = new watson.ConversationV1({
   username: process.env.CONVERSATION_USERNAME,
   password: process.env.CONVERSATION_PASSWORD,
   workspace_id: process.env.WORKSPACE_ID,
-  version_date: '2018=05-30',
+  version_date: '2018-05-30',
 });
 
 function updateIntent(intent, example, description=null){
@@ -190,7 +190,7 @@ module.exports = function(controller) {
     let intents = message.watsonData.intents;
     console.log(JSON.stringify(intents));
     
-    if (!intents.length) return;
+    if (!intents.length) handleConfusion(message,bot);
     else handleIntent(intents[0],bot,message);
     
     }
@@ -273,8 +273,8 @@ function handleConfusion(message,bot) {
             pattern: "addFile",
             callback: function(reply, convo) {
               // !!!
-              console.log(message);
-              // updateIntent("vcAddFilesIntent", 
+              console.log(message.text);
+              updateIntent("vcAddFilesIntent", message.text, "testing!!!");
               addFiles(bot, message, fileNames);
               convo.next();
             }
