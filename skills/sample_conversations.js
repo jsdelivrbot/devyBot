@@ -15,7 +15,33 @@ var fileNames = [];
   fileNames.push('example2.js');
   fileNames.push('example3.js');
 
+var watson = require('watson-developer-cloud');
+var conversation = new watson.ConversationV1({
+  username: process.env.CONVERSATION_USERNAME,
+  password: process.env.CONVERSATION_PASSWORD,
+  workspace_id: process.env.WORKSPACE_ID,
+  version_date: '2018=05-30',
+});
 
+function updateIntent(intent, example, description=null){
+  var params = {
+  workspace_id: process.env.WORKSPACE_ID,
+  intent: intent,
+  new_examples: [
+    {
+      text: example
+    }
+  ],
+  new_description: description
+};
+  conversation.updateIntent(params, function(err, response) {
+  if (err) {
+    console.error(err);
+  } else {
+    console.log(JSON.stringify(response, null, 2));
+  }
+});
+}
 
 
 module.exports = function(controller) {
@@ -247,6 +273,8 @@ function handleConfusion(message,bot) {
             pattern: "addFile",
             callback: function(reply, convo) {
               // !!!
+              console.log(message);
+              // updateIntent("vcAddFilesIntent", 
               addFiles(bot, message, fileNames);
               convo.next();
             }
