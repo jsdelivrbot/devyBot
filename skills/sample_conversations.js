@@ -7,6 +7,7 @@ Mocking data only so far. Consider loading context variables as local varables f
 */
 
 //
+var request = require('request');
 
 const minimum_confidence = 0.5;
 
@@ -268,13 +269,28 @@ function handleConfusion(message,bot) {
             pattern: "addFile",
             callback: function(reply, convo) {
               // !!!
-              convo.say("Noted and new example created!");
+              convo.say("Noted and new example for addFile intent created!");
               console.log(message.text);
               createExample("vcAddFilesIntent", message.text, "testing!!!");
               addFiles(bot, message, fileNames);
               convo.next();
             }
-  }
+  },
+  {
+            pattern: "commit",
+            callback: function(reply, convo) {
+              // !!!
+              convo.say("Noted and new example for commit intent created!");
+              console.log(message.text);
+              // createExample("vcAddFilesIntent", message.text, "testing!!!");  
+              request.post('http://skaha.cs.ubc.ca:11500', {form:{key:'value'}}, function(err,httpResponse,body){
+                if (err) console.log(err);
+                console.log(httpResponse);
+                console.log(body);
+              });
+              convo.next();
+            }
+  },
 ]
       ); 
     })
