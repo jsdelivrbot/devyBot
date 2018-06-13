@@ -283,9 +283,9 @@ function handleConfusion(message,bot) {
               convo.say("Noted and new example for commit intent created!");
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
-              request.post('http://skaha.cs.ubc.ca:11500', {form:{key:'value'}}, function(err,httpResponse,body){
+              request.post('http://skaha.cs.ubc.ca:443', {form:{key:'value'}}, function(err,httpResponse,body){
                 if (err) console.log(err);
-                console.log(httpResponse);
+                // console.log(httpResponse);
                 console.log(body);
               });
               convo.next();
