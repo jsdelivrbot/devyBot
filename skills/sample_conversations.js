@@ -286,7 +286,6 @@ function handleConfusion(message,bot) {
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               var options = {
                 host: 'skaha.cs.ubc.ca',
-                port: 443,
                 path: '/alexa/devy',
                 method: 'POST',
                 body: {value:'test'}
