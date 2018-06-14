@@ -287,11 +287,10 @@ function handleConfusion(message,bot) {
               request({
                 uri: "http://skaha.cs.ubc.ca/alexa/devy",
                 method: "POST",
-                form: {
-                  value: "test"
-                }}, function(error, response, body) {
+                form: {name: "test"}
+                }, function(error, response, body) {
                 if (error) console.log(error);
-                console.log(response);
+                console.log(body);
               });
               convo.next();
             }
