@@ -284,15 +284,10 @@ function handleConfusion(message,bot) {
               convo.say("Noted and new example for commit intent created!");
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
-              var options = {
-                host: 'skaha.cs.ubc.ca',
-                path: '/alexa/devy',
-                method: 'POST',
-                body: {value:'test'}
-              };
-              http.request(options, function(res, err) {
-                if (err) console.log(err);
-                console.log(res);
+              request({
+                uri: "http://skaha.cs.ubc.ca/alexa/devy",
+                method: "POST",
+              }, function(err, res, body) {
               });
               convo.next();
             }
