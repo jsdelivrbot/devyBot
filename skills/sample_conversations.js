@@ -293,9 +293,7 @@ function handleConfusion(message,bot) {
               };
               http.request(options, function(res, err) {
                 if (err) console.log(err);
-                res.on('data', function (chunk) {
-                   console.log('Response: ' + chunk);
-                });
+                console.log(res);
               });
               convo.next();
             }
