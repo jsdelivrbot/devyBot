@@ -182,7 +182,8 @@ module.exports = function(controller) {
   //   if (message.watsonError) {
   //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
   // } else {
-    console.log(JSON.stringify(message.watsonData));
+    try {
+    console.log(JSON.stringify(message));
     if (message) {
     let intents = message.watsonData.intents;
     console.log(JSON.stringify(intents));
@@ -191,6 +192,7 @@ module.exports = function(controller) {
     else handleIntent(intents[0],bot,message);
     
     }
+    } catch (err) {}
   });
 }
 
@@ -291,7 +293,7 @@ function handleConfusion(message,bot) {
                 form: {name: "test"}
                 }, function(error, response, body) {
                 if (error) console.log(error);
-                console.log(body);
+                console.log(response);
               });
               
               convo.next();
