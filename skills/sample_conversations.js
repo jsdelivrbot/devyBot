@@ -285,8 +285,9 @@ function handleConfusion(message,bot) {
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               request({
-                uri: "http://skaha.cs.ubc.ca/test:443",
+                uri: "http://skaha.cs.ubc.ca/test",
                 method: "POST",
+                port: 443,
                 form: {name: "test"}
                 }, function(error, response, body) {
                 if (error) console.log(error);
