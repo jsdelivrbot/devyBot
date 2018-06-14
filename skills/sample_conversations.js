@@ -295,7 +295,35 @@ function handleConfusion(message,bot) {
                 if (error) console.log(error);
                 console.log(response);
               });
-              
+              var postData = {body: "annie"};
+              var options = {
+  hostname: 'skaha.cs.ubc.ca',
+  port: 443,
+  path: '/test',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Length': 100
+  }
+            };
+              const req = http.request(options, (res) => {
+  console.log(`STATUS: ${res.statusCode}`);
+  console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+  res.setEncoding('utf8');
+  res.on('data', (chunk) => {
+    console.log(`BODY: ${chunk}`);
+  });
+  res.on('end', () => {
+    console.log('No more data in response.');
+  });
+});
+              req.on('error', (e) => {
+  console.error(`problem with request: ${e}`);
+});
+
+// write data to request body
+req.write("{body: \'annie/'}");
+req.end();
               convo.next();
             }
   },
