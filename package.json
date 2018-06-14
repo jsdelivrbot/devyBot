@@ -18,8 +18,8 @@
     "express-hbs": "^1.0.4",
     "node-env-file": "^0.1.8",
     "querystring": "^0.2.0",
-    "request": "^2.79.0",
-    "watson-developer-cloud": "^3.4.2",
+    "request": "^2.87.0",
+    "watson-developer-cloud": "^3.5.0",
     "wordfilter": "^0.2.6"
   },
   "devDependencies": {},
