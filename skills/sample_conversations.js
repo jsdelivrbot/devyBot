@@ -283,7 +283,15 @@ function handleConfusion(message,bot) {
               convo.say("Noted and new example for commit intent created!");
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
-              request.post('http://skaha.cs.ubc.ca/alexa/devy:443', {form:{key:'value'}}, function(err,httpResponse,body){
+              request.post({
+                host: 'http://skaha.cs.ubc.ca',
+                port: 443,
+                path: '/alexa/devy',
+                form: {
+                  value: "test"
+                }
+                
+              }, function(err,httpResponse,body){
                 if (err) console.log(err);
                 // console.log(httpResponse);
                 console.log(body);
