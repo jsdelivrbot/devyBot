@@ -281,13 +281,17 @@ function handleConfusion(message,bot) {
             pattern: "commit",
             callback: function(reply, convo) {
               // !!!
-              convo.say("Noted and new example for commit intent created!");
+              convo.say("request sent");
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               request({
                 uri: "http://skaha.cs.ubc.ca/alexa/devy",
                 method: "POST",
-              }, function(err, res, body) {
+                form: {
+                  value: "test"
+                }}, function(error, response, body) {
+                if (error) console.log(error);
+                console.log(response);
               });
               convo.next();
             }
