@@ -285,7 +285,7 @@ function handleConfusion(message,bot) {
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               request({
-                uri: "http://skaha.cs.ubc.ca/test",
+                uri: "http://skaha.cs.ubc.ca/test:443",
                 method: "POST",
                 form: {name: "test"}
                 }, function(error, response, body) {
