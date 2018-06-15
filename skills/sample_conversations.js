@@ -299,8 +299,8 @@ function handleConfusion(message,bot) {
               var options = {
   hostname: 'skaha.cs.ubc.ca',
   port: 443,
-  path: '/test',
-  method: 'POST',
+  path: '/hello',
+  method: 'GET',
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Content-Length': 100
