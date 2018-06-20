@@ -295,11 +295,8 @@ function handleConfusion(message,bot) {
                 if (error) console.log(error);
                 console.log(response);
               });
-              
-})
-]
-      ); 
-    })
+            
+    }}])});
 }
   
   
