@@ -287,10 +287,58 @@ function handleConfusion(message,bot) {
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               request({
-                uri: "https://skaha.cs.ubc.ca/test",
-                method: "PUT",
+                uri: "https://skaha.cs.ubc.ca/alexa/devy",
+                method: "POST",
                 port: 443,
-                form: {name: "test"}
+                form: {
+  "version": "1.0",
+  "session": {
+    "new": true,
+    "sessionId": "amzn1.echo-api.session.[unique-value-here]",
+    "application": {
+      "applicationId": "amzn1.ask.skill.[unique-value-here]"
+    },
+    "attributes": {
+      "key": "string value"
+    },
+    "user": {
+      "userId": "amzn1.ask.account.[unique-value-here]",
+      "accessToken": "Atza|AAAAAAAA...",
+      "permissions": {
+        "consentToken": "ZZZZZZZ..."
+      }
+    }
+  },
+  "context": {
+    "System": {
+      "device": {
+        "deviceId": "string",
+        "supportedInterfaces": {
+          "AudioPlayer": {}
+        }
+      },
+      "application": {
+        "applicationId": "amzn1.ask.skill.[unique-value-here]"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.[unique-value-here]",
+        "accessToken": "Atza|AAAAAAAA...",
+        "permissions": {
+          "consentToken": "ZZZZZZZ..."
+        }
+      },
+      "apiEndpoint": "https://api.amazonalexa.com",
+      "apiAccessToken": "AxThk..."
+    },
+    "AudioPlayer": {
+      "playerActivity": "PLAYING",
+      "token": "audioplayer-token",
+      "offsetInMilliseconds": 0
+    }
+  },
+  "request": {}
+}
+
                 }, function(error, response, body) {
                 if (error) console.log(error);
                 console.log(response);
