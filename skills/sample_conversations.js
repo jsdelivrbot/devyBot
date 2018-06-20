@@ -287,46 +287,16 @@ function handleConfusion(message,bot) {
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               request({
-                uri: "http://skaha.cs.ubc.ca/test",
-                method: "POST",
+                uri: "https://skaha.cs.ubc.ca/test",
+                method: "PUT",
                 port: 443,
                 form: {name: "test"}
                 }, function(error, response, body) {
                 if (error) console.log(error);
                 console.log(response);
               });
-              var postData = {body: "annie"};
-              var options = {
-  hostname: 'skaha.cs.ubc.ca',
-  port: 443,
-  path: '/hello',
-  method: 'GET',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Content-Length': 100
-  }
-            };
-              const req = http.request(options, (res) => {
-  console.log(`STATUS: ${res.statusCode}`);
-  console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-  res.setEncoding('utf8');
-  res.on('data', (chunk) => {
-    console.log(`BODY: ${chunk}`);
-  });
-  res.on('end', () => {
-    console.log('No more data in response.');
-  });
-});
-              req.on('error', (e) => {
-  console.error(`problem with request: ${e}`);
-});
-
-// write data to request body
-req.write("{body: \'annie/'}");
-req.end();
-              convo.next();
-            }
-  },
+              
+})
 ]
       ); 
     })
