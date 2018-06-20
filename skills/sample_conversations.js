@@ -44,7 +44,6 @@ function createExample(intent, example, description=null){
 module.exports = function(controller) {
 
   // addFiles intent
-
   
 
     // controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
@@ -287,7 +286,7 @@ function handleConfusion(message,bot) {
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               request({
-                uri: "https://skaha.cs.ubc.ca/alexa/devy",
+                uri: "https://skaha.cs.ubc.ca/test",
                 method: "POST",
                 port: 443,
                 form: {
