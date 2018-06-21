@@ -5,7 +5,6 @@ Switch cases according to both intents from Watson and the context data of the u
 Mocking data only so far. Consider loading context variables as local varables first and then access in code?
 
 */
-
 //
 var request = require('request');
 var http = require('http');
