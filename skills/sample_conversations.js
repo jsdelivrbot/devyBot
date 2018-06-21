@@ -288,7 +288,7 @@ function handleConfusion(message,bot) {
                 uri: "https://skaha.cs.ubc.ca/test",
                 method: "POST",
                 port: 443,
-                form: {body: {
+                form: {
   "version": "1.0",
   "session": {
     "new": true,
@@ -336,7 +336,6 @@ function handleConfusion(message,bot) {
   },
   "request": {}
 }
-                      }
 
                 }, function(error, response, body) {
                 if (error) console.log(error);
