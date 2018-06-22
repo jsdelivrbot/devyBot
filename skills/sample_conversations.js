@@ -290,15 +290,23 @@ function handleConfusion(message,bot) {
               convo.next()
     }}])});
 }
-  
-  
-function addFiles(bot, message, fileNames) {
+
+function sendRequest(body) {
+  try {
   chai.request('https://skaha.cs.ubc.ca:443')
                 .post('/test')
-                .send({user: "amzn1.ask.account."+USERID, intent: "addFiles"})
+                .send(body)
                 .then(function (res) {
                 console.log(res);
               });
+  } catch(err) {
+    console.error(err);
+  }
+}
+  
+function addFiles(bot, message, fileNames) {
+  var reqBody = {user: "amzn1.ask.account."+USERID, intent: "addFiles"};
+  sendRequest(reqBody);
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
         convo.say('There were no untracked files to add.');
