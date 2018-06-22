@@ -179,11 +179,8 @@ module.exports = function(controller) {
 
 //     });
 
+  
   controller.hears(['.*'], 'direct_message,direct_mention', function(bot, message) {
-
-  //   if (message.watsonError) {
-  //   console.log("I'm sorry, but for technical reasons I can't respond to your message");
-  // } else {
     try {
     console.log(JSON.stringify(message));
     if (message) {
@@ -192,9 +189,11 @@ module.exports = function(controller) {
     
     if (!intents.length) handleConfusion(message,bot);
     else handleIntent(intents[0],bot,message);
-    
     }
-    } catch (err) {}
+    } catch (err) {
+      bot.say(message,"I'm sorry, but for technical reasons I can't respond to your message");
+      console.error(err);
+    }
   });
 }
 
