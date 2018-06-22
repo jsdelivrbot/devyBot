@@ -13,6 +13,7 @@
     "botkit-storage-mongo": "^1.0.6",
     "botkit-studio-metrics": "^0.0.2",
     "cookie-parser": "^1.4.3",
+    "chai": "^4.1.2",
     "debug": "^2.3.3",
     "express": "^4.14.0",
     "express-hbs": "^1.0.4",

@@ -8,6 +8,7 @@ Mocking data only so far. Consider loading context variables as local varables f
 //
 var request = require('request');
 var http = require('http');
+var chai = require('chai');
 
 const minimum_confidence = 0.5;
 
@@ -284,17 +285,13 @@ function handleConfusion(message,bot) {
               convo.say("request sent");
               console.log(message.text);
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
-              request({
-                uri: "https://skaha.cs.ubc.ca/test",
-                method: "POST",
-                port: 443,
-                body: JSON.toString({
+              chai.request('https://skaha.cs.ubc.ca:443')
+                .post('/test')
+                .attach("body",JSON.toString({
                   userID: "AE3A5BKFY7XJCVG7FQGDFXEBUIJS3Z34YYHX743PQV27NZTP7Z3DWPPSE2LSI4YF4P5TOCOKJBWRSVSRQISLM2FW3F62BJIKN6MQY4F7QQCAGT7UXVEFMKXJEVMI5RQLD5FGPD67SDR3T2XDJLYWR6DWAJB5L5Q5E3XSEMUCCJVWLH43PROBZ34Y5W6PG6NP3RMDBBWJMWNV2KA"
-                })
-                                    }, function(error, response, body) {
-                if (error) console.log(error);
-                console.log(response);
-              });
+                }).then(function (res) {
+                console.log(res);
+              })
               convo.next()
             
     }}])});
