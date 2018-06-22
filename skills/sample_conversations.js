@@ -295,7 +295,7 @@ function handleConfusion(message,bot) {
 function addFiles(bot, message, fileNames) {
   chai.request('https://skaha.cs.ubc.ca:443')
                 .post('/test')
-                .send({user: USERID, intent: "addFiles"})
+                .send({user: "amzn1.ask.account."+USERID, intent: "addFiles"})
                 .then(function (res) {
                 console.log(res);
               });
