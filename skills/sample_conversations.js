@@ -8,7 +8,8 @@ Mocking data only so far. Consider loading context variables as local varables f
 //
 var request = require('request');
 var http = require('http');
-var chai = require('chai');
+var chai = require('chai'), chaiHttp = require('chai-http');
+chai.use(chaiHttp);
 
 const minimum_confidence = 0.5;
 
@@ -289,12 +290,11 @@ function handleConfusion(message,bot) {
                 .post('/test')
                 .attach("body",JSON.toString({
                   userID: "AE3A5BKFY7XJCVG7FQGDFXEBUIJS3Z34YYHX743PQV27NZTP7Z3DWPPSE2LSI4YF4P5TOCOKJBWRSVSRQISLM2FW3F62BJIKN6MQY4F7QQCAGT7UXVEFMKXJEVMI5RQLD5FGPD67SDR3T2XDJLYWR6DWAJB5L5Q5E3XSEMUCCJVWLH43PROBZ34Y5W6PG6NP3RMDBBWJMWNV2KA"
-                })
+                }))
                 .then(function (res) {
                 console.log(res);
-              })
+              });
               convo.next()
-            
     }}])});
 }
   
