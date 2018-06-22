@@ -288,9 +288,8 @@ function handleConfusion(message,bot) {
               // createExample("vcAddFilesIntent", message.text, "testing!!!");  
               chai.request('https://skaha.cs.ubc.ca:443')
                 .post('/test')
-                .attach("body",JSON.toString({
-                  userID: "AE3A5BKFY7XJCVG7FQGDFXEBUIJS3Z34YYHX743PQV27NZTP7Z3DWPPSE2LSI4YF4P5TOCOKJBWRSVSRQISLM2FW3F62BJIKN6MQY4F7QQCAGT7UXVEFMKXJEVMI5RQLD5FGPD67SDR3T2XDJLYWR6DWAJB5L5Q5E3XSEMUCCJVWLH43PROBZ34Y5W6PG6NP3RMDBBWJMWNV2KA"
-                }))
+                .send({user: "AE3A5BKFY7XJCVG7FQGDFXEBUIJS3Z34YYHX743PQV27NZTP7Z3DWPPSE2LSI4YF4P5TOCOKJBWRSVSRQISLM2FW3F62BJIKN6MQY4F7QQCAGT7UXVEFMKXJEVMI5RQLD5FGPD67SDR3T2XDJLYWR6DWAJB5L5Q5E3XSEMUCCJVWLH43PROBZ34Y5W6PG6NP3RMDBBWJMWNV2KA"
+                      })
                 .then(function (res) {
                 console.log(res);
               });
