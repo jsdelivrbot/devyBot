@@ -289,58 +289,12 @@ function handleConfusion(message,bot) {
                 method: "POST",
                 port: 443,
                 form: {
-  "version": "1.0",
-  "session": {
-    "new": true,
-    "sessionId": "amzn1.echo-api.session.[unique-value-here]",
-    "application": {
-      "applicationId": "amzn1.ask.skill.[unique-value-here]"
-    },
-    "attributes": {
-      "key": "string value"
-    },
-    "user": {
-      "userId": "amzn1.ask.account.AE3A5BKFY7XJCVG7FQGDFXEBUIJS3Z34YYHX743PQV27NZTP7Z3DWPPSE2LSI4YF4P5TOCOKJBWRSVSRQISLM2FW3F62BJIKN6MQY4F7QQCAGT7UXVEFMKXJEVMI5RQLD5FGPD67SDR3T2XDJLYWR6DWAJB5L5Q5E3XSEMUCCJVWLH43PROBZ34Y5W6PG6NP3RMDBBWJMWNV2KA",
-      "accessToken": "Atza|AAAAAAAA...",
-      "permissions": {
-        "consentToken": "ZZZZZZZ..."
-      }
-    }
-  },
-  "context": {
-    "System": {
-      "device": {
-        "deviceId": "string",
-        "supportedInterfaces": {
-          "AudioPlayer": {}
-        }
-      },
-      "application": {
-        "applicationId": "amzn1.ask.skill.[unique-value-here]"
-      },
-      "user": {
-        "userId": "amzn1.ask.account.[unique-value-here]",
-        "accessToken": "Atza|AAAAAAAA...",
-        "permissions": {
-          "consentToken": "ZZZZZZZ..."
-        }
-      },
-      "apiEndpoint": "https://api.amazonalexa.com",
-      "apiAccessToken": "AxThk..."
-    },
-    "AudioPlayer": {
-      "playerActivity": "PLAYING",
-      "token": "audioplayer-token",
-      "offsetInMilliseconds": 0
-    }
-  },
-  "request": {}
-}
-
-                }, function(error, response, body) {
+                  userID: "AE3A5BKFY7XJCVG7FQGDFXEBUIJS3Z34YYHX743PQV27NZTP7Z3DWPPSE2LSI4YF4P5TOCOKJBWRSVSRQISLM2FW3F62BJIKN6MQY4F7QQCAGT7UXVEFMKXJEVMI5RQLD5FGPD67SDR3T2XDJLYWR6DWAJB5L5Q5E3XSEMUCCJVWLH43PROBZ34Y5W6PG6NP3RMDBBWJMWNV2KA"
+                }}, function(error, response, body) {
                 if (error) console.log(error);
                 console.log(response);
               });
+              convo.next()
             
     }}])});
 }
