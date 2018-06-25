@@ -260,14 +260,14 @@ async function addFiles(bot, message) {
   var reqBody = {user: "amzn1.ask.account."+USERID, intent: "vcAddFilesIntent", state: 0};
   try {
     var res = await sendRequest(reqBody);
-    var fileNames = res.body;
+    var fileNames = JSON.parse(res.body);
   } catch (err) {
     console.error("In addFiles:" +err);
     return;
   }
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
-        convo.say('There were no untracked files to add.');
+        convo.say('There are no untracked files to add.');
         convo.next();
     });
     return;
@@ -314,6 +314,7 @@ async function addFiles(bot, message) {
             pattern: "yes",
             callback: function(reply, convo) {
               // !!!
+              
                 convo.say('OK, I\'ve added your files.');
                 convo.next();
             }
