@@ -158,16 +158,23 @@ module.exports = function(controller) {
 }
 
 // takes in the intent returned by Watson
-// switch among
+// if the confidence of the intent is lower than the set threshold, 
+// it calls handleConfusion
 function handleIntent(intent, bot, message) {
       let entities = message.watsonData.entities;
       if (intent.confidence < minimum_confidence) {
       handleConfusion(message, bot);
     }
-      
-    if (intent.intent == "vcAddFilesIntent")
-      addFiles(bot, message, fileNames);
-    
+    switch (intent.intent) {
+      case "vcAddFilesIntent":
+        addFiles(bot, message, fileNames);
+        break;
+      default: 
+        console.log("In handleIntent()'s default switch case");
+        bot.reply(message, "I don't recognize this intent.");
+        break;
+                         }
+
     if (intent.intent == "ghStartIssueIntent") {
       let num_of_entities = entities.length;
       console.log(typeof num_of_entities);
