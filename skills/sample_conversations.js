@@ -324,8 +324,11 @@ async function addFiles(bot, message) {
           {
             pattern: "cancel",
             callback: function(reply, convo) {
-                convo.say('OK, action canceled!');
-                convo.next();
+              var reqBody = {user: "amzn1.ask.account."+USERID, intent: "vcAddFilesIntent", state: 3};
+                sendRequest(reqBody).then(()=> {
+                    convo.say('OK, action canceled!');
+                    convo.next();
+                }).catch((err)=> console.error(err));
             }
         },
         {
@@ -348,12 +351,13 @@ async function addFiles(bot, message) {
                   });
                   patterns.push({
                     pattern: i.toString(),
-                    callback: function(reply, convo2) {
-                    convo.say(fileNames[i] + ' is removed from the adding list!');
-                    // delete fileNames[i];
-                    fileNames.splice(i,1);
-                    convo.next();
-                    addFiles(bot, message, fileNames);
+                    callback: function(reply, convo) {
+                      var reqBody = {user: "amzn1.ask.account."+USERID, intent: "vcAddFilesIntent", state: 2, fileName: fileNames[i]};
+                      sendRequest(reqBody).then(()=> {
+                          convo.say(fileNames[i] + ' is removed from the adding list!');
+                          convo.next();
+                          addFiles(bot, message);     
+                      }).catch((err)=>console.error(err));
                    }});
                 }
                convo.say('Let\'s review the files then:');
