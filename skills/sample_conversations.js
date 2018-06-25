@@ -21,11 +21,6 @@ var conversation = new watson.ConversationV1({
 });
 const minimum_confidence = 0.5;
 
-var fileNames = [];
-  fileNames.push('example1.js');
-  fileNames.push('example2.js');
-  fileNames.push('example3.js');
-
 var intentList = [
                         {
                             "text": "Push code to git",
@@ -81,10 +76,12 @@ function sendRequest(body) {
                 .post('/test')
                 .send(body)
                 .then(function (res) {
-                console.log(res);
+                        console.log(res);
+                        return res;  
               });
   } catch(err) {
     console.error(err);
+    throw err;
   }
 }
 
@@ -182,7 +179,7 @@ function handleIntent(intent, bot, message) {
     }
     switch (intent.intent) {
       case "vcAddFilesIntent":
-        addFiles(bot, message, fileNames);
+        addFiles(bot, message);
         break;
       case "ghStartIssueIntent":
         let num_of_entities = entities.length;
@@ -239,7 +236,7 @@ function handleConfusion(message,bot) {
               convo.say("Noted and new example for addFile intent created!");
               console.log(message.text);
               createExample("vcAddFilesIntent", message.text, "testing!!!");
-              addFiles(bot, message, fileNames);
+              addFiles(bot, message);
               convo.next();
             }
   },
@@ -256,9 +253,16 @@ function handleConfusion(message,bot) {
 
 
   
-function addFiles(bot, message, fileNames) {
-  var reqBody = {user: "amzn1.ask.account."+USERID, intent: "addFiles", state: 0};
-  sendRequest(reqBody);
+async function addFiles(bot, message) {
+  // start with state 0, getting the list of files to be added 
+  var reqBody = {user: "amzn1.ask.account."+USERID, intent: "vcAddFilesIntent", state: 0};
+  try {
+    var res = await sendRequest(reqBody);
+    var fileNames = res.data;
+  } catch (err) {
+    console.error("In addFiles:" +err);
+    return;
+  }
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
         convo.say('There were no untracked files to add.');
