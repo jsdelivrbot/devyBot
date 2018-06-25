@@ -57,21 +57,36 @@ var intentList = [
                         }
                     ]
 
+
+// takes the intent name and the new text example,
+// uploads to Watson so new example of the intent will be added accordingly
+// description is optional
 function createExample(intent, example, description=null){
   var params = {
-  workspace_id: process.env.WORKSPACE_ID,
-  intent: intent,
-  text: example
-};
+    workspace_id: process.env.WORKSPACE_ID,
+    intent: intent,
+    text: example};
   conversation.createExample(params, function(err, response) {
   if (err) {
     console.error(err);
   } else {
     console.log(JSON.stringify(response, null, 2));
-  } 
-});
+  }});
 }
 
+// sends request to proxy. takes in the body part of the request
+function sendRequest(body) {
+  try {
+  chai.request('https://skaha.cs.ubc.ca:443')
+                .post('/test')
+                .send(body)
+                .then(function (res) {
+                console.log(res);
+              });
+  } catch(err) {
+    console.error(err);
+  }
+}
 
 module.exports = function(controller) {
       
@@ -169,11 +184,19 @@ function handleIntent(intent, bot, message) {
       case "vcAddFilesIntent":
         addFiles(bot, message, fileNames);
         break;
+      case "ghStartIssueIntent":
+        let num_of_entities = entities.length;
+        console.log(typeof num_of_entities);
+        let startPos = entities[num_of_entities-1].location[0];
+        let endPos = entities[num_of_entities-1].location[1];
+        let issueBranch = message.text.substring(startPos,endPos);
+        bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
+        break;
       default: 
         console.log("In handleIntent()'s default switch case");
         bot.reply(message, "I don't recognize this intent.");
         break;
-                         }
+    }
 
     if (intent.intent == "ghStartIssueIntent") {
       let num_of_entities = entities.length;
@@ -231,18 +254,7 @@ function handleConfusion(message,bot) {
     }}])});
 }
 
-function sendRequest(body) {
-  try {
-  chai.request('https://skaha.cs.ubc.ca:443')
-                .post('/test')
-                .send(body)
-                .then(function (res) {
-                console.log(res);
-              });
-  } catch(err) {
-    console.error(err);
-  }
-}
+
   
 function addFiles(bot, message, fileNames) {
   var reqBody = {user: "amzn1.ask.account."+USERID, intent: "addFiles"};
