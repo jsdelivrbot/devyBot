@@ -257,7 +257,7 @@ function handleConfusion(message,bot) {
 
   
 function addFiles(bot, message, fileNames) {
-  var reqBody = {user: "amzn1.ask.account."+USERID, intent: "addFiles"};
+  var reqBody = {user: "amzn1.ask.account."+USERID, intent: "addFiles", state: 0};
   sendRequest(reqBody);
   if (fileNames.length == 0) {
     bot.startConversation(message, function(err, convo) {
