@@ -12,14 +12,6 @@ var request = require('request');
 var http = require('http');
 var chai = require('chai'), chaiHttp = require('chai-http');
 chai.use(chaiHttp);
-
-const minimum_confidence = 0.5;
-
-var fileNames = [];
-  fileNames.push('example1.js');
-  fileNames.push('example2.js');
-  fileNames.push('example3.js');
-
 var watson = require('watson-developer-cloud');
 var conversation = new watson.ConversationV1({
   username: process.env.CONVERSATION_USERNAME,
@@ -27,6 +19,43 @@ var conversation = new watson.ConversationV1({
   workspace_id: process.env.WORKSPACE_ID,
   version_date: '2018-05-30',
 });
+const minimum_confidence = 0.5;
+
+var fileNames = [];
+  fileNames.push('example1.js');
+  fileNames.push('example2.js');
+  fileNames.push('example3.js');
+
+var intentList = [
+                        {
+                            "text": "Push code to git",
+                            "value": "vcPushIntent"
+                        },
+                        {
+                            "text": "Commit code",
+                            "value": "vcCommitIntent"
+                        },
+                        {
+                            "text": "Pull code from git",
+                            "value": "vcPullIntent"
+                        },
+                        {
+                            "text": "Get the owner of the file",
+                            "value": "vcGetFileOwnerIntent"
+                        },
+                        {
+                            "text": "Add my files",
+                            "value": "vcAddFilesIntent"
+                        },
+                        {
+                            "text": "Get the current branch",
+                            "value": "vcGetCurrentBranchIntent"
+                        },
+                        {
+                            "text": "Start working on an issue",
+                            "value": "ghStartIssueIntent"
+                        }
+                    ]
 
 function createExample(intent, example, description=null){
   var params = {
@@ -45,76 +74,7 @@ function createExample(intent, example, description=null){
 
 
 module.exports = function(controller) {
-
-  // addFiles intent
-  
-
-    // controller.hears(['add','files'], 'direct_message,direct_mention', function(bot, message) {
-    //     // addFiles intent
-    //   addFiles(bot, message, fileNames);
-    // });
-
-    // controller.hears(['commit'], 'direct_message,direct_mention', function(bot, message) {
-    //     bot.createConversation(message, function(err, convo) {
-    //        var number = 0;
-    //       switch (number) {
-    //         case 0:
-    //           // Done
-    //           convo.say('Ok, I\'ve committed your files.');
-    //           break;
-    //         case 1:
-    //           // CommitUntracked
-    //           convo.ask({
-    //             attachments: [
-    //               {text:
-    //             '"There are no tracked changes but there are untracked files. Should I commit them?"',
-    //                callback_id: 'CommitUntracked',
-    //             attachment_type: 'default',
-    //             actions: [
-    //                 {
-    //                     "name":"yes",
-    //                     "text": "Yes",
-    //                     "value": "yes",
-    //                     "type": "button",
-    //                 },
-    //                 {
-    //                     "name":"no",
-    //                     "text": "No",
-    //                     "value": "no",
-    //                     "type": "button",
-    //                 }
-    //             ]
-    //               }]},
-    //                    [{
-    //                      // and then commit the files?
-    //                      pattern: "yes",
-    //                      callback: function(reply, convo){
-    //                         convo.say('Ok, I\'ve committed your files.');
-    //                         convo.next();
-    //                      }},
-    //                     {
-    //                       // and then not commit anything?
-    //                      pattern: "no",
-    //                      callback: function(reply, convo){
-    //                         convo.say('There is nothing to commit.');
-    //                         convo.next();
-    //                      }}
-    //                    ]);
-    //           break;
-    //         case 0:
-    //           // Done
-    //           convo.say('Ok, I\'ve committed your files.');
-    //           break;
-    //         case 0:
-    //           // Done
-    //           convo.say('Ok, I\'ve committed your files.');
-    //           break;
-    //         default:
-    //           break;
-    //                     }
-    //     })
-    // })
-
+      
 
 //     controller.hears(['some question?'], 'direct_message,direct_mention', function(bot, message) {
 
@@ -179,7 +139,7 @@ module.exports = function(controller) {
 
 //     });
 
-  
+  // listen to everything and send it to Watson
   controller.hears(['.*'], 'direct_message,direct_mention', function(bot, message) {
     try {
     console.log(JSON.stringify(message));
@@ -197,6 +157,8 @@ module.exports = function(controller) {
   });
 }
 
+// takes in the intent returned by Watson
+// switch among
 function handleIntent(intent, bot, message) {
       let entities = message.watsonData.entities;
       if (intent.confidence < minimum_confidence) {
@@ -234,43 +196,14 @@ function handleConfusion(message,bot) {
                     "name": "intentList",
                     "text": "Pick an intent...",
                     "type": "select",
-                    "options": [
-                        {
-                            "text": "Push code to git",
-                            "value": "push"
-                        },
-                        {
-                            "text": "Commit code",
-                            "value": "commit"
-                        },
-                        {
-                            "text": "Pull code from git",
-                            "value": "pull"
-                        },
-                        {
-                            "text": "Get the owner of the file",
-                            "value": "ownerOfFile"
-                        },
-                        {
-                            "text": "Add my files",
-                            "value": "addFile"
-                        },
-                        {
-                            "text": "Get the current branch",
-                            "value": "getCurrentBranch"
-                        },
-                        {
-                            "text": "Start working on an issue",
-                            "value": "startOnIssue"
-                        }
-                    ]
+                    "options": intentList
                 }
             ]
         }
     ]
 },[
   {
-            pattern: "addFile",
+            pattern: "vcAddFilesIntent",
             callback: function(reply, convo) {
               // !!!
               convo.say("Noted and new example for addFile intent created!");
