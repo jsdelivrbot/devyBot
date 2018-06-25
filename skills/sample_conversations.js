@@ -71,18 +71,20 @@ function createExample(intent, example, description=null){
 
 // sends request to proxy. takes in the body part of the request
 function sendRequest(body) {
-  try {
-  chai.request('https://skaha.cs.ubc.ca:443')
+  return new Promise(function(fulfill, reject) {
+    try {
+      chai.request('https://skaha.cs.ubc.ca:443')
                 .post('/test')
                 .send(body)
                 .then(function (res) {
-                        console.log(res);
-                        return res.body;  
+                        // console.log(res);
+                        fulfill(res);  
               });
-  } catch(err) {
-    console.error(err);
-    throw err;
-  }
+      } catch(err) {
+        console.error(err);
+        reject(err);
+      }
+      });
 }
 
 module.exports = function(controller) {
@@ -258,8 +260,7 @@ async function addFiles(bot, message) {
   var reqBody = {user: "amzn1.ask.account."+USERID, intent: "vcAddFilesIntent", state: 0};
   try {
     var res = await sendRequest(reqBody);
-    console.log(res);
-    var fileNames = res.data;
+    var fileNames = res.body;
   } catch (err) {
     console.error("In addFiles:" +err);
     return;
