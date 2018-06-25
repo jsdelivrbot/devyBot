@@ -77,7 +77,7 @@ function sendRequest(body) {
                 .send(body)
                 .then(function (res) {
                         console.log(res);
-                        return res;  
+                        return res.body;  
               });
   } catch(err) {
     console.error(err);
@@ -258,6 +258,7 @@ async function addFiles(bot, message) {
   var reqBody = {user: "amzn1.ask.account."+USERID, intent: "vcAddFilesIntent", state: 0};
   try {
     var res = await sendRequest(reqBody);
+    console.log(res);
     var fileNames = res.data;
   } catch (err) {
     console.error("In addFiles:" +err);
