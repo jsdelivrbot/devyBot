@@ -450,16 +450,19 @@ async function commit(bot, message) {
          
         case "Nothing": 
            console.log("here");
-           bot.say(message, res.body.content);
+           convo.say(res.body.content);
+           convo.next();
            break;
          
        case "error":
-           bot.say(message, "There's been an error committing your file.");
+           convo.say("There's been an error committing your file.");
            console.error(res.body.content);
+           convo.next();
            break;
          
        case "success":
-           bot.say(message, 'Ok, I\'ve added untracked files and committed your files.');
+           convo.say('Ok, I\'ve added untracked files and committed your files.');
+           convo.next();
            break;
          
        default: 
