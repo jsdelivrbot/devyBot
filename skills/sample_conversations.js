@@ -393,11 +393,18 @@ async function addFiles(bot, message) {
     });
 }
 
-function commit(bot, message) {
+async function commit(bot, message) {
    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent"};
-   var res;
-   sendRequest(reqBody).then((r) => {res = r.body});
-  bot.startConversation(message, function (err, convo) {
-    if (res) convo.say("Committed successfully!");
+   var res = await sendRequest(reqBody);
+   var state = res.body.state; 
+   console.log(res.body);
+   bot.startConversation(message, function (err, convo) {
+     switch(state) {
+         case "CommitUntracked":
+            convo.ask(res.content);
+     }
+    // if (res) convo.say("Committed successfully!");
     convo.next();})
+   return;
 }
+
