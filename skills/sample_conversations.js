@@ -264,8 +264,7 @@ function addFiles(bot, message) {
     // start with state 0, getting the list of files to be added 
     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 0};
     try {
-        var res = await
-        sendRequest(reqBody);
+        var res = await sendRequest(reqBody);
         var fileNames = JSON.parse(res.body);
     } catch (err) {
         console.error("In addFiles:" + err);
