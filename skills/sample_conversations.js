@@ -396,8 +396,7 @@ async function addFiles(bot, message) {
 async function commit(bot, message) {
    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 0};
    var res = await sendRequest(reqBody);
-   var state = res.body.state; 
-   console.log(res.body);
+   var state = JSON.parse(res.body).state;
    bot.startConversation(message, function (err, convo) {
      switch(state) {
          case "CommitUntracked", "Untracked":
@@ -459,6 +458,10 @@ async function commit(bot, message) {
            console.error(res.body.content);
            break;
          
+       case "success":
+           bot.say(message, 'Ok, I\'ve added untracked files and committed your files.');
+           break;
+         
        default: 
          console.log("AT COMMIT DEFAULT SWITCH CASE");
          break;
@@ -466,4 +469,3 @@ async function commit(bot, message) {
     // if (res) convo.say("Committed successfully!");
    return;
 }
-
