@@ -432,9 +432,11 @@ async function commit(bot, message) {
                     // !!!
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say('OK, I\'ve added your files.');
+                        convo.say('Ok, I\'ve committed your files.');
                     convo.next();
-                }).
+                }).catch((err) {
+                      
+                    }
                     catch((err) => console.error(err)
                 )
                     ;
