@@ -187,6 +187,7 @@ function handleIntent(intent, bot, message) {
             break;
         case "vcCommitIntent":
             commit(bot,message);
+            break;
         case "ghStartIssueIntent":
             let num_of_entities = entities.length;
             console.log(typeof num_of_entities);
@@ -394,9 +395,9 @@ async function addFiles(bot, message) {
 
 function commit(bot, message) {
    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent"};
-   sendRequest(reqBody).then((r) => {
-                                    c});
+   var res;
+   sendRequest(reqBody).then((r) => {res = r.body});
   bot.startConversation(message, function (err, convo) {
-    onvo.say(fileNames[i] + ' is removed from the adding list!');
-                                convo.next();
+    if (res) convo.say("Committed successfully!");
+    convo.next();})
 }
