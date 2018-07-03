@@ -432,66 +432,38 @@ async function commit(bot, message) {
                     // !!!
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say('Ok, I\'ve committed your files.');
+                        convo.say('Ok, I\'ve added untracked files and committed your files.');
                     convo.next();
-                }).catch((err) {
-                      
-                    }
-                    catch((err) => console.error(err)
-                )
-                    ;
+                }).catch((err) => console.error(err));
                 }
             },
             {
                 pattern: "no",
                 callback: function (reply, convo) {
-                    // review single files
-                    var attachments = [];
-                    var patterns = [];
-                    for (let i in fileNames) {
-                        attachments.push({
-                            text: fileNames[i],
-                            attachment_type: 'default',
-                            callback_id: '123',
-                            actions: [{
-                                "name": i.toString(),
-                                "text": "Remove",
-                                "value": i.toString(),
-                                "type": "button",
-                            }]
-                        });
-                        patterns.push({
-                            pattern: i.toString(),
-                            callback: function (reply, convo) {
-                                var reqBody = {
-                                    user: "amzn1.ask.account." + USERID,
-                                    intent: "vcAddFilesIntent",
-                                    state: 2,
-                                    fileName: fileNames[i]
-                                };
-                                sendRequest(reqBody).then((r) => {
-                                    convo.say(fileNames[i] + ' is removed from the adding list!');
-                                convo.next();
-                                addFiles(bot, message);
-                            }).
-                                catch((err) => console.error(err)
-                            )
-                                ;
-                            }
-                        });
-                    }
-                    convo.say('Let\'s review the files then:');
-                    let attachments_object = {};
-                    attachments_object.attachments = attachments;
-                    convo.ask(
-                        attachments_object,
-                        patterns);
-                    convo.next();
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
+                    sendRequest(reqBody).then((r) => {
+                        convo.say('Ok, I\'ve added untracked files and committed your files.');
+                    convo.next();});
                 }
             }]);
-    });     }
+         convo.next();
+         break;
+         
+        case "Nothing": 
+           console.log("here");
+           bot.say(message, res.body.content);
+           break;
+         
+       case "error":
+           bot.say(message, "There's been an error committing your file.");
+           console.error(res.body.content);
+           break;
+         
+       default: 
+         console.log("AT COMMIT DEFAULT SWITCH CASE");
+         break;
+                 }});
     // if (res) convo.say("Committed successfully!");
-    convo.next();})
    return;
 }
 
