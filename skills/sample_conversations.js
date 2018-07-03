@@ -185,6 +185,8 @@ function handleIntent(intent, bot, message) {
         case "vcAddFilesIntent":
             addFiles(bot, message);
             break;
+        case "vcCommitIntent":
+            commit(bot,message);
         case "ghStartIssueIntent":
             let num_of_entities = entities.length;
             console.log(typeof num_of_entities);
@@ -258,9 +260,7 @@ function handleConfusion(message, bot) {
 }
 
 
-async
-
-function addFiles(bot, message) {
+async function addFiles(bot, message) {
     // start with state 0, getting the list of files to be added 
     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 0};
     try {
@@ -320,11 +320,11 @@ function addFiles(bot, message) {
                 callback: function (reply, convo) {
                     // !!!
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 1};
-                    sendRequest(reqBody).then(() = > {
+                    sendRequest(reqBody).then((r) => {
                         convo.say('OK, I\'ve added your files.');
                     convo.next();
                 }).
-                    catch((err) = > console.error(err)
+                    catch((err) => console.error(err)
                 )
                     ;
                 }
@@ -333,11 +333,11 @@ function addFiles(bot, message) {
                 pattern: "cancel",
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 3};
-                    sendRequest(reqBody).then(() = > {
+                    sendRequest(reqBody).then((r) => {
                         convo.say('OK, action canceled!');
                     convo.next();
                 }).
-                    catch((err) = > console.error(err)
+                    catch((err) => console.error(err)
                 )
                     ;
                 }
@@ -369,12 +369,12 @@ function addFiles(bot, message) {
                                     state: 2,
                                     fileName: fileNames[i]
                                 };
-                                sendRequest(reqBody).then(() = > {
+                                sendRequest(reqBody).then((r) => {
                                     convo.say(fileNames[i] + ' is removed from the adding list!');
                                 convo.next();
                                 addFiles(bot, message);
                             }).
-                                catch((err) = > console.error(err)
+                                catch((err) => console.error(err)
                             )
                                 ;
                             }
@@ -390,4 +390,13 @@ function addFiles(bot, message) {
                 }
             }]);
     });
+}
+
+function commit(bot, message) {
+   var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent"};
+   sendRequest(reqBody).then((r) => {
+                                    c});
+  bot.startConversation(message, function (err, convo) {
+    onvo.say(fileNames[i] + ' is removed from the adding list!');
+                                convo.next();
 }
