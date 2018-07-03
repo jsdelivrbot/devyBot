@@ -394,15 +394,100 @@ async function addFiles(bot, message) {
 }
 
 async function commit(bot, message) {
-   var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent"};
+   var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 0};
    var res = await sendRequest(reqBody);
    var state = res.body.state; 
    console.log(res.body);
    bot.startConversation(message, function (err, convo) {
      switch(state) {
-         case "CommitUntracked":
-            convo.ask(res.content);
-     }
+         case "CommitUntracked", "Untracked":
+            convo.ask({
+            attachments: [
+                {
+                    // title: reply_1,
+                    text: res.body.content,
+                    // !!! figure out this callback_id
+                    callback_id: 'CommitUntracked',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name": "yes",
+                            "text": "Yes",
+                            "value": "yes",
+                            "type": "button",
+                        },
+                        {
+                            "name": "no",
+                            "text": "No",
+                            "value": "no",
+                            "type": "button",
+                        }
+                    ]
+                }
+            ]
+        }, [
+            {
+                pattern: "yes",
+                callback: function (reply, convo) {
+                    // !!!
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
+                    sendRequest(reqBody).then((r) => {
+                        convo.say('OK, I\'ve added your files.');
+                    convo.next();
+                }).
+                    catch((err) => console.error(err)
+                )
+                    ;
+                }
+            },
+            {
+                pattern: "no",
+                callback: function (reply, convo) {
+                    // review single files
+                    var attachments = [];
+                    var patterns = [];
+                    for (let i in fileNames) {
+                        attachments.push({
+                            text: fileNames[i],
+                            attachment_type: 'default',
+                            callback_id: '123',
+                            actions: [{
+                                "name": i.toString(),
+                                "text": "Remove",
+                                "value": i.toString(),
+                                "type": "button",
+                            }]
+                        });
+                        patterns.push({
+                            pattern: i.toString(),
+                            callback: function (reply, convo) {
+                                var reqBody = {
+                                    user: "amzn1.ask.account." + USERID,
+                                    intent: "vcAddFilesIntent",
+                                    state: 2,
+                                    fileName: fileNames[i]
+                                };
+                                sendRequest(reqBody).then((r) => {
+                                    convo.say(fileNames[i] + ' is removed from the adding list!');
+                                convo.next();
+                                addFiles(bot, message);
+                            }).
+                                catch((err) => console.error(err)
+                            )
+                                ;
+                            }
+                        });
+                    }
+                    convo.say('Let\'s review the files then:');
+                    let attachments_object = {};
+                    attachments_object.attachments = attachments;
+                    convo.ask(
+                        attachments_object,
+                        patterns);
+                    convo.next();
+                }
+            }]);
+    });     }
     // if (res) convo.say("Committed successfully!");
     convo.next();})
    return;
