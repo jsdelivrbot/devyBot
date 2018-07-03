@@ -72,7 +72,7 @@ function createExample(intent, example, description=null) {
 }
 
 // sends request to proxy. takes in the body part of the request
-function sendRequest(body) {
+async function sendRequest(body) {
     return new Promise(function (fulfill, reject) {
         try {
             chai.request('https://skaha.cs.ubc.ca:443')
