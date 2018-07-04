@@ -188,6 +188,9 @@ function handleIntent(intent, bot, message) {
         case "vcCommitIntent":
             commit(bot,message);
             break;
+        case "vcPullIntent":
+            pull(bot,message);
+            break;
         case "ghStartIssueIntent":
             let num_of_entities = entities.length;
             console.log(typeof num_of_entities);
@@ -260,6 +263,10 @@ function handleConfusion(message, bot) {
     });
 }
 
+async function pull(bot,message) {
+    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 0};
+    
+}
 
 async function addFiles(bot, message) {
     // start with state 0, getting the list of files to be added 
@@ -398,9 +405,12 @@ async function commit(bot, message) {
    var res = await sendRequest(reqBody);
    res = JSON.parse(res.body);
    var state = res.state;
+         console.log("EQUAL IS: " + (state==="CommitUntracked"));
    bot.startConversation(message, function (err, convo) {
      switch(state) {
-         case "CommitUntracked", "Untracked":
+       case "CommitUntracked":
+       case "Untracked":
+         console.log("here");
             convo.ask({
             attachments: [
                 {
@@ -450,7 +460,6 @@ async function commit(bot, message) {
          break;
          
         case "Nothing": 
-           console.log("here");
            convo.say(res.content);
            convo.next();
            break;
