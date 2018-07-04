@@ -308,7 +308,8 @@ async function pull(bot,message) {
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 2};
                     sendRequest(reqBody).then((r) => {
-                    convo.say(r.content);
+                      console.log(r);
+                    convo.say(r);
                     });
                 }
             }]);
