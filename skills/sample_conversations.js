@@ -299,8 +299,10 @@ async function pull(bot,message) {
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say(r.content);
-                }).catch((err) => console.error(err));
+                      var r_body = JSON.parse(r.body);
+                      convo.say(r_body.content);
+                      convo.next();                
+                    }).catch((err) => console.error(err));
                 }
             },
             {
@@ -308,8 +310,9 @@ async function pull(bot,message) {
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 2};
                     sendRequest(reqBody).then((r) => {
-                      console.log(r);
-                    convo.say(r);
+                    var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();
                     });
                 }
             }]);
@@ -400,8 +403,9 @@ async function addFiles(bot, message) {
                     // !!!
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say('OK, I\'ve added your files.');
-                    convo.next();
+                        var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();
                 }).
                     catch((err) => console.error(err)
                 )
@@ -413,8 +417,9 @@ async function addFiles(bot, message) {
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 3};
                     sendRequest(reqBody).then((r) => {
-                        convo.say('OK, action canceled!');
-                    convo.next();
+                        var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();
                 }).
                     catch((err) => console.error(err)
                 )
@@ -511,8 +516,9 @@ async function commit(bot, message) {
                     // !!!
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say(r.content);
-                    convo.next();
+                        var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();
                 }).catch((err) => console.error(err));
                 }
             },
@@ -521,8 +527,9 @@ async function commit(bot, message) {
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 2};
                     sendRequest(reqBody).then((r) => {
-                        convo.say(r.content);
-                    convo.next();});
+                        var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();});
                 }
             }]);
          convo.next();
