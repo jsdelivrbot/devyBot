@@ -518,7 +518,7 @@ async function commit(bot, message) {
             {
                 pattern: "no",
                 callback: function (reply, convo) {
-                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 2};
                     sendRequest(reqBody).then((r) => {
                         convo.say(r.content);
                     convo.next();});
@@ -550,4 +550,3 @@ async function commit(bot, message) {
     // if (res) convo.say("Committed successfully!");
    return;
 }
-
