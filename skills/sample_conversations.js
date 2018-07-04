@@ -496,7 +496,7 @@ async function commit(bot, message) {
                     // !!!
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say('Ok, I\'ve added untracked files and committed your files.');
+                        convo.say(r.content);
                     convo.next();
                 }).catch((err) => console.error(err));
                 }
@@ -506,7 +506,7 @@ async function commit(bot, message) {
                 callback: function (reply, convo) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
-                        convo.say('Ok, I\'ve added untracked files and committed your files.');
+                        convo.say(r.content);
                     convo.next();});
                 }
             }]);
@@ -525,7 +525,7 @@ async function commit(bot, message) {
            break;
          
        case "success":
-           convo.say('Ok, I\'ve committed your files.');
+           convo.say(res.content);
            convo.next();
            break;
          
