@@ -307,10 +307,8 @@ async function pull(bot,message) {
             {
                 pattern: "no",
                 callback: function (reply, convo) {
-                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
-                    sendRequest(reqBody).then((r) => {
-                    convo.say(r.content);
-                    convo.next();});
+                    convo.say(;
+                    convo.next();
                 }
             }]);
          convo.next();
