@@ -265,7 +265,63 @@ function handleConfusion(message, bot) {
 
 async function pull(bot,message) {
     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 0};
-    
+    try {
+        var res = await sendRequest(reqBody);
+        var body = JSON.parse(res.body);
+        bot.startConversation(message, function (err, convo) {
+        switch(body.state) {
+          case "pullUncommitted":
+            convo.ask({
+            attachments: [
+                {
+                    text: body.content,
+                    callback_id: 'pullUncomitted',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name": "yes",
+                            "text": "Yes",
+                            "value": "yes",
+                            "type": "button",
+                        },
+                        {
+                            "name": "no",
+                            "text": "No",
+                            "value": "no",
+                            "type": "button",
+                        }
+                    ]
+                }
+            ]
+        }, [
+            {
+                pattern: "yes",
+                callback: function (reply, convo) {
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 1};
+                    sendRequest(reqBody).then((r) => {
+                        convo.say('Ok, I\'ve added untracked files and committed your files.');
+                    convo.next();
+                }).catch((err) => console.error(err));
+                }
+            },
+            {
+                pattern: "no",
+                callback: function (reply, convo) {
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 1};
+                    sendRequest(reqBody).then((r) => {
+                        convo.say('Ok, I\'ve added untracked files and committed your files.');
+                    convo.next();});
+                }
+            }]);
+         convo.next();
+         break;
+                         }
+        })
+    }
+    catch (err) {
+        console.error("In pull:" + err);
+        return;
+    }
 }
 
 async function addFiles(bot, message) {
@@ -405,12 +461,10 @@ async function commit(bot, message) {
    var res = await sendRequest(reqBody);
    res = JSON.parse(res.body);
    var state = res.state;
-         console.log("EQUAL IS: " + (state==="CommitUntracked"));
    bot.startConversation(message, function (err, convo) {
      switch(state) {
        case "CommitUntracked":
        case "Untracked":
-         console.log("here");
             convo.ask({
             attachments: [
                 {
