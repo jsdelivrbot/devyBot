@@ -461,7 +461,7 @@ async function commit(bot, message) {
            break;
          
        case "success":
-           convo.say('Ok, I\'ve added untracked files and committed your files.');
+           convo.say('Ok, I\'ve committed your files.');
            convo.next();
            break;
          
