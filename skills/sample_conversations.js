@@ -396,7 +396,8 @@ async function addFiles(bot, message) {
 async function commit(bot, message) {
    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 0};
    var res = await sendRequest(reqBody);
-   var state = JSON.parse(res.body).state;
+   res = JSON.parse(res.body);
+   var state = res.state;
    bot.startConversation(message, function (err, convo) {
      switch(state) {
          case "CommitUntracked", "Untracked":
@@ -404,7 +405,7 @@ async function commit(bot, message) {
             attachments: [
                 {
                     // title: reply_1,
-                    text: res.body.content,
+                    text: res.content,
                     // !!! figure out this callback_id
                     callback_id: 'CommitUntracked',
                     attachment_type: 'default',
@@ -450,13 +451,13 @@ async function commit(bot, message) {
          
         case "Nothing": 
            console.log("here");
-           convo.say(res.body.content);
+           convo.say(res.content);
            convo.next();
            break;
          
        case "error":
            convo.say("There's been an error committing your file.");
-           console.error(res.body.content);
+           console.error(res.content);
            convo.next();
            break;
          
