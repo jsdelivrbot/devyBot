@@ -300,19 +300,35 @@ async function pull(bot,message) {
                     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 1};
                     sendRequest(reqBody).then((r) => {
                         convo.say(r.content);
-                    convo.next();
                 }).catch((err) => console.error(err));
                 }
             },
             {
                 pattern: "no",
                 callback: function (reply, convo) {
-                    convo.say(;
-                    convo.next();
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 2};
+                    sendRequest(reqBody).then((r) => {
+                    convo.say(r.content);
+                    });
                 }
             }]);
          convo.next();
          break;
+            
+          case "success":
+          case "fail":
+            convo.say(body.content);
+            convo.next();
+            break;
+            
+          case "error" :
+            convo.say("There has been an error pulling your files.");
+            console.error(body.content);
+            break;
+            
+          default: 
+            console.error("in pull default case");
+            break;
                          }
         })
     }
