@@ -558,3 +558,5 @@ async function commit(bot, message) {
     // if (res) convo.say("Committed successfully!");
    return;
 }
+
+
