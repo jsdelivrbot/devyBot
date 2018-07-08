@@ -15,5 +15,10 @@ module.exports = function(webserver, controller) {
         controller.handleWebhookPayload(req, res);
 
     });
-
+  
+    webserver.post('/devy', function(req, res) {
+       console.log(req.body);
+       res.status(200);
+      res.send();
+    });
 }
