@@ -17,8 +17,9 @@ module.exports = function(webserver, controller) {
     });
   
     webserver.post('/devy', function(req, res) {
-       console.log(req.body);
+       console.log("at /devy endpoint: " + JSON.stringify(req.body));
        res.status(200);
-       res.send();
+       bot.reply(req.body);
+       res.json(req.body);
     });
 }

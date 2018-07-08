@@ -190,8 +190,7 @@ function handleIntent(intent, bot, message) {
                 .post('/devy')
                 .send({content: "something"})
                 .then(function (res) {
-                    // console.log(res);
-
+                    console.log(res.body);
                 });
             // commit(bot,message);
             break;
@@ -565,5 +564,4 @@ async function commit(bot, message) {
     // if (res) convo.say("Committed successfully!");
    return;
 }
-
 
