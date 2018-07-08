@@ -186,7 +186,14 @@ function handleIntent(intent, bot, message) {
             addFiles(bot, message);
             break;
         case "vcCommitIntent":
-            commit(bot,message);
+            chai.request('https://square-ninja.glitch.me')
+                .post('/devy')
+                .send({content: "something"})
+                .then(function (res) {
+                    // console.log(res);
+
+                });
+            // commit(bot,message);
             break;
         case "vcPullIntent":
             pull(bot,message);
