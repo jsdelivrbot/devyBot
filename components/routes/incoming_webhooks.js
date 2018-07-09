@@ -7,7 +7,6 @@ module.exports = function(webserver, controller) {
 
         // NOTE: we should enforce the token check here
 
-     //  console.log(JSON.stringify(req));
         // respond to Slack that the webhook has been received.
         res.status(200);
 
@@ -15,11 +14,10 @@ module.exports = function(webserver, controller) {
         controller.handleWebhookPayload(req, res);
 
     });
-  
-    webserver.post('/devy', function(req, res) {
+  webserver.post('/devy', function(req, res) {
        console.log("at /devy endpoint: " + JSON.stringify(req.body));
        res.status(200);
-       bot.reply(req.body);
        res.json(req.body);
     });
 }
+    
