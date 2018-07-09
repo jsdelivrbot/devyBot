@@ -71,6 +71,10 @@ function createExample(intent, example, description=null) {
     });
 }
 
+function prompt(controller, o) {
+  
+}
+
 // sends request to proxy. takes in the body part of the request
 async function sendRequest(body) {
     return new Promise(function (fulfill, reject) {
