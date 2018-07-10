@@ -1,6 +1,6 @@
 /*
 
-Interactive part of Devy bot. 
+Interactive part of Devy bot.
 Switch cases according to both intents from Watson and the context data of the user
 Mocking data only so far. Consider loading context variables as local varables first and then access in code?
 
@@ -72,7 +72,7 @@ function createExample(intent, example, description=null) {
 }
 
 function prompt(controller, o) {
-  
+
 }
 
 // sends request to proxy. takes in the body part of the request
@@ -178,7 +178,7 @@ module.exports = function (controller) {
 }
 
 // takes in the intent returned by Watson
-// if the confidence of the intent is lower than the set threshold, 
+// if the confidence of the intent is lower than the set threshold,
 // it calls handleConfusion
 function handleIntent(intent, bot, message) {
     let entities = message.watsonData.entities;
@@ -190,16 +190,13 @@ function handleIntent(intent, bot, message) {
             addFiles(bot, message);
             break;
         case "vcCommitIntent":
-            chai.request('https://square-ninja.glitch.me')
-                .post('/devy')
-                .send({content: "something"})
-                .then(function (res) {
-                    //console.log(res);
-                });
-            // commit(bot,message);
+            commit(bot,message);
             break;
         case "vcPullIntent":
             pull(bot,message);
+            break;
+        case "vcPushIntent":
+            push(bot,message);
             break;
         case "ghStartIssueIntent":
             let num_of_entities = entities.length;
@@ -265,12 +262,93 @@ function handleConfusion(message, bot) {
                         // !!!
                         convo.say("request sent");
                         console.log(message.text);
-                        // createExample("vcAddFilesIntent", message.text, "testing!!!");  
+                        // createExample("vcAddFilesIntent", message.text, "testing!!!");
                         convo.next()
                     }
                 }]);
         convo.say("Noted and new example for addFile intent created!");
     });
+}
+
+
+async function push(bot,message) {
+    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPushIntent", state: 0};
+    try {
+        var res = await sendRequest(reqBody);
+        var body = JSON.parse(res.body);
+        bot.startConversation(message, function (err, convo) {
+        switch(body.state) {
+          case "pushUncommitted":
+            convo.ask({
+            attachments: [
+                {
+                    text: body.content,
+                    callback_id: 'pushUncomitted',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name": "yes",
+                            "text": "Yes",
+                            "value": "yes",
+                            "type": "button",
+                        },
+                        {
+                            "name": "no",
+                            "text": "No",
+                            "value": "no",
+                            "type": "button",
+                        }
+                    ]
+                }
+            ]
+        }, [
+            {
+                pattern: "yes",
+                callback: function (reply, convo) {
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPushIntent", state: 1};
+                    sendRequest(reqBody).then((r) => {
+                      var r_body = JSON.parse(r.body);
+                      convo.say(r_body.content);
+                      convo.next();
+                    }).catch((err) => console.error(err));
+                }
+            },
+            {
+                pattern: "no",
+                callback: function (reply, convo) {
+                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcPullIntent", state: 2};
+                    sendRequest(reqBody).then((r) => {
+                    var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();
+                    });
+                }
+            }]);
+         convo.next();
+         break;
+
+          case "success":
+          case "fail":
+          case "canceled":
+            convo.say(body.content);
+            convo.next();
+            break;
+
+          case "error" :
+            convo.say("There has been an error pulling your files.");
+            console.error(body.content);
+            break;
+
+          default:
+            console.error("in push default case");
+            break;
+                         }
+        })
+    }
+    catch (err) {
+        console.error("In push, caught an error:" + err);
+        return;
+    }
 }
 
 async function pull(bot,message) {
@@ -311,7 +389,7 @@ async function pull(bot,message) {
                     sendRequest(reqBody).then((r) => {
                       var r_body = JSON.parse(r.body);
                       convo.say(r_body.content);
-                      convo.next();                
+                      convo.next();
                     }).catch((err) => console.error(err));
                 }
             },
@@ -328,32 +406,32 @@ async function pull(bot,message) {
             }]);
          convo.next();
          break;
-            
+
           case "success":
           case "fail":
             convo.say(body.content);
             convo.next();
             break;
-            
+
           case "error" :
             convo.say("There has been an error pulling your files.");
             console.error(body.content);
             break;
-            
-          default: 
+
+          default:
             console.error("in pull default case");
             break;
                          }
         })
     }
     catch (err) {
-        console.error("In pull:" + err);
+        console.error("In pull, caught an error:" + err);
         return;
     }
 }
 
 async function addFiles(bot, message) {
-    // start with state 0, getting the list of files to be added 
+    // start with state 0, getting the list of files to be added
     var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 0};
     try {
         var res = await sendRequest(reqBody);
@@ -544,24 +622,24 @@ async function commit(bot, message) {
             }]);
          convo.next();
          break;
-         
-        case "Nothing": 
+
+        case "Nothing":
            convo.say(res.content);
            convo.next();
            break;
-         
+
        case "error":
            convo.say("There's been an error committing your file.");
            console.error(res.content);
            convo.next();
            break;
-         
+
        case "success":
            convo.say(res.content);
            convo.next();
            break;
-         
-       default: 
+
+       default:
          console.log("AT COMMIT DEFAULT SWITCH CASE");
          break;
                  }});
