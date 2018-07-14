@@ -49,6 +49,10 @@ var intentList = [
     {
         "text": "Start working on an issue",
         "value": "ghStartIssueIntent"
+    },
+    {
+        "text": "Create new workflow",
+        "value": "addNewWorkflow"
     }
 ]
 
@@ -71,12 +75,15 @@ function createExample(intent, example, description=null) {
     });
 }
 
-function prompt(controller, o) {
-
+function tellBotToSay(message, path) {
+         chai.request('https://hooks.slack.com')
+                .post(path)
+                .send({text: message})
 }
 
 // sends request to proxy. takes in the body part of the request
 async function sendRequest(body) {
+    console.log("Sending to proxy: " + JSON.stringify(body));
     return new Promise(function (fulfill, reject) {
         try {
             chai.request('https://skaha.cs.ubc.ca:443')
@@ -162,7 +169,7 @@ module.exports = function (controller) {
     // listen to everything and send it to Watson
     controller.hears(['.*'], 'direct_message,direct_mention', function (bot, message) {
         try {
-            console.log(JSON.stringify(message));
+            // console.log(JSON.stringify(message));
             if (message) {
                 let intents = message.watsonData.intents;
                 console.log(JSON.stringify(intents));
@@ -197,6 +204,9 @@ function handleIntent(intent, bot, message) {
             break;
         case "vcPushIntent":
             push(bot,message);
+            break;
+        case "addNewWorkflow":
+            openEditor(bot, message);
             break;
         case "ghStartIssueIntent":
             let num_of_entities = entities.length;
@@ -268,6 +278,45 @@ function handleConfusion(message, bot) {
                 }]);
         convo.say("Noted and new example for addFile intent created!");
     });
+}
+
+function openEditor(bot, message) {
+  // bot.startConversation(message, function(err, convo) {
+  //   convo.ask({
+  bot.reply(message,
+            {
+    "text": "Here's the link to the editor:",
+    "attachments": [
+        {
+            "fallback": "workflow editor",
+            "actions": [
+                {
+                    "type": "button",
+                    "name": "Workflow Editor",
+                    "text": "Workflow Editor",
+                    "url": "file://Users/anniewang/Desktop/devy/jsplumb-master/editor.html",
+                    "style": "primary",
+                }
+            ]
+        }
+    ]
+}
+            ////////////
+            // the following version doesnt work but is prettier
+            ////////////
+    //         {attachments: [
+    //     {
+    //         "fallback": "openEditor",
+    //         "pretext": "Here's the link to the editor:",
+    //         "title": "Workflow Editor",
+    //         "title_link": "file:///Users/anniewang/Desktop/devy/jsplumb-master/editor.html",
+    //         "text": "",
+    //         "color": "#7CD197"
+    //     }
+    // ]}
+           );
+  //   });
+  // });
 }
 
 
@@ -430,9 +479,9 @@ async function pull(bot,message) {
     }
 }
 
-async function addFiles(bot, message) {
+async function addFiles(bot, message, files = []) {
     // start with state 0, getting the list of files to be added
-    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 0};
+    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 0, files: files};
     try {
         var res = await sendRequest(reqBody);
         var fileNames = JSON.parse(res.body);
@@ -489,15 +538,16 @@ async function addFiles(bot, message) {
                 pattern: "yes",
                 callback: function (reply, convo) {
                     // !!!
-                    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcAddFilesIntent", state: 1};
+                    var reqBody = {user: "amzn1.ask.account." + USERID,
+                                   intent: "vcAddFilesIntent",
+                                   state: 1,
+                                   files: fileNames
+                                  };
                     sendRequest(reqBody).then((r) => {
-                        var r_body = JSON.parse(r.body);
-                    convo.say(r_body.content);
+                      var r_body = JSON.parse(r.body);
+                      convo.say(r_body.content);
                       convo.next();
-                }).
-                    catch((err) => console.error(err)
-                )
-                    ;
+                    }).catch((err) => console.error(err));
                 }
             },
             {
@@ -539,16 +589,15 @@ async function addFiles(bot, message) {
                                     user: "amzn1.ask.account." + USERID,
                                     intent: "vcAddFilesIntent",
                                     state: 2,
-                                    fileName: fileNames[i]
+                                    removeIndex: i,
+                                    files: fileNames
                                 };
                                 sendRequest(reqBody).then((r) => {
                                     convo.say(fileNames[i] + ' is removed from the adding list!');
-                                convo.next();
-                                addFiles(bot, message);
-                            }).
-                                catch((err) => console.error(err)
-                            )
-                                ;
+                                    convo.next();
+                                    console.log(JSON.parse(r.body));
+                                    addFiles(bot, message, JSON.parse(r.body));
+                            }).catch((err) => console.error(err));
                             }
                         });
                     }
@@ -563,6 +612,9 @@ async function addFiles(bot, message) {
             }]);
     });
 }
+
+
+
 
 async function commit(bot, message) {
    var reqBody = {user: "amzn1.ask.account." + USERID, intent: "vcCommitIntent", state: 0};
