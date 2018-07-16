@@ -61,6 +61,14 @@ var watsonMiddleware = require('botkit-middleware-watson')({
   minimum_confidence: 0.50, // (Optional) Default is 0.75
 });
 
+var watson = require('watson-developer-cloud');
+var conversation = new watson.ConversationV1({
+    username: process.env.CONVERSATION_USERNAME,
+    password: process.env.CONVERSATION_PASSWORD,
+    workspace_id: process.env.WORKSPACE_ID,
+    version_date: '2018-05-30',
+});
+
 if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT) {
   usage_tip();
   // process.exit(1);
@@ -91,9 +99,14 @@ if (process.env.MONGO_URI) {
 var controller = Botkit.slackbot(bot_options);
 controller.startTicking();
   controller.middleware.receive.use(watsonMiddleware.receive);
-
+controller.conversation = conversation;
 // Set up an Express-powered webserver to expose oauth and webhook endpoints
 var webserver = require(__dirname + '/components/express_webserver.js')(controller);
+
+module.exports = function() {
+  console.log("yay it works");
+  require("./skills/main")(controller);
+}
 
 if (!process.env.clientId || !process.env.clientSecret) {
 
@@ -135,10 +148,12 @@ if (!process.env.clientId || !process.env.clientSecret) {
   // enable advanced botkit studio metrics
   require('botkit-studio-metrics')(controller);
 
-  var normalizedPath = require("path").join(__dirname, "skills");
-  require("fs").readdirSync(normalizedPath).forEach(function(file) {
-    require("./skills/" + file)(controller);
-  });
+  // var normalizedPath = require("path").join(__dirname, "skills");
+  // require("fs").readdirSync(normalizedPath).forEach(function(file) {
+  //   require("./skills/" + file)(controller);
+  // });
+  
+  require("./skills/main")(controller);
 
   // This captures and evaluates any message sent to the bot as a DM
   // or sent to the bot in the form "@bot message" and passes it to
