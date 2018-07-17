@@ -6,7 +6,7 @@ var push = require("../../skills/push");
 var debug = require('debug')('botkit:incoming_webhooks');
 var chai = require('chai'), chaiHttp = require('chai-http');
 chai.use(chaiHttp);
-var bot = require('../../bot'); 
+var bot = require("../../bot"); 
 module.exports = async function(webserver, controller) {
 
     debug('Configured /slack/receive url');
@@ -35,17 +35,7 @@ module.exports = async function(webserver, controller) {
                 .post(res2.path)
                 .send({text: res2.text})
                 .then(()=>{
-                   var params = {
-                       workspace_id: process.env.WORKSPACE_ID,
-                        name: 'Updated workspace',
-                        description: 'Test workspace modified via API.'};
-                   controller.conversation.updateWorkspace(params, function(err, response) {
-                    if (err) {
-                        console.error(err);
-                    } else {
-                    console.log(JSON.stringify(response, null, 2));}
-                      });
-                    console.log(bot);
+                   controller.trigger('newWFCreated', []);
                     //console.log(main);//.updateWatsonConversation();
                     console.log("new workflow created");
             })
@@ -54,6 +44,7 @@ module.exports = async function(webserver, controller) {
        res.json(req.body);
     }catch(err)
     {}});
+  
   
       webserver.post('/say', function(req, res) {
          console.log("at /say endpoint: " + JSON.stringify(req.body));
@@ -66,8 +57,9 @@ module.exports = async function(webserver, controller) {
       })
   
       webserver.post('/trigger', function(req, res) {
-        var body = req.body;
-        controller.trigger(body,[bot,body]);
+        var body = Object.keys(req.body)[0];
+        console.log('in /trigger endpoint. body is '+ body);
+        controller.trigger(body,[]);
         res.status(200);
         res.json("success");
         })

@@ -1,6 +1,6 @@
 var functions = require("./functions");
 
-module.export = async function commit(bot, message) {
+module.exports = async function commit(bot, message) {
    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcCommitIntent", state: 0};
    var res = await functions.sendRequest(reqBody);
    res = JSON.parse(res.body);

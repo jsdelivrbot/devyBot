@@ -1,6 +1,6 @@
 var functions = require("./functions");
 
-module.exports = async function(bot, message = null, files = []) {
+module.exports = async function(bot, message , files = []) {
 
     // start with state 0, getting the list of files to be added 
     var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcAddFilesIntent", state: 0, files: files};

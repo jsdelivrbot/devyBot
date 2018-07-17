@@ -103,11 +103,6 @@ controller.conversation = conversation;
 // Set up an Express-powered webserver to expose oauth and webhook endpoints
 var webserver = require(__dirname + '/components/express_webserver.js')(controller);
 
-module.exports = function() {
-  console.log("yay it works");
-  require("./skills/main")(controller);
-}
-
 if (!process.env.clientId || !process.env.clientSecret) {
 
   // Load in some helpers that make running Botkit on Glitch.com better

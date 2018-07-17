@@ -46,6 +46,16 @@ module.exports = {
             console.log(JSON.stringify(response, null, 2));
         }
     });
-  }
+  },
   
+  // update watson after a new workflow is created
+  updateWatson: function (controller){
+        var watson = require('watson-developer-cloud');
+        controller.conversation = new watson.ConversationV1({
+    username: process.env.CONVERSATION_USERNAME,
+    password: process.env.CONVERSATION_PASSWORD,
+    workspace_id: process.env.WORKSPACE_ID,
+    version_date: '2018-05-30',
+});
+  }
 }

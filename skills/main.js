@@ -7,14 +7,14 @@ Mocking data only so far. Consider loading context variables as local varables f
 */
 //
 
-
 var addFiles = require("./addFiles");
 var commit = require("./commit");
 var pull = require("./pull");
 var push = require("./push");
 var functions = require("./functions");
 const minimum_confidence = 0.5;
-
+var sampleMessage = null;
+var sampleBot = null;
 var intentList = [
     {
         "text": "Push code to git",
@@ -127,16 +127,18 @@ module.exports = function (controller) {
 
 //     });
 
-    controller.on('addFiles',  (bot, message) => addFiles(bot, message));
-    controller.on('commit',  (bot, message) => commit(bot, message));
-    controller.on('pull',  (bot, message) => pull(bot, message));
-    controller.on('push',  (bot, message) => push(bot, message));
-  
+    controller.on('addFiles',  () => addFiles(sampleBot, sampleMessage));
+    controller.on('commit',  () => commit(sampleBot, sampleMessage));
+    controller.on('pull',  () => pull(sampleBot, sampleMessage));
+    controller.on('push',  () => push(sampleBot, sampleMessage));
+    controller.on('newWFCreated', () => functions.updateWatson(controller));
   
     // listen to everything and send it to Watson
     controller.hears(['.*'], 'direct_message,direct_mention', function (bot, message) {
         try {
-            // console.log(JSON.stringify(message));
+            sampleBot = bot;
+            sampleMessage = message;
+            console.log(message.user); // user is UASR6U42J, channel: 'DAW4Q7A5C'
             if (message) {
                 let intents = message.watsonData.intents;
                 console.log(JSON.stringify(intents));
@@ -157,7 +159,7 @@ module.exports = function (controller) {
 function handleIntent(controller, intent, bot, message) {
     let entities = message.watsonData.entities;
     if (intent.confidence < minimum_confidence) {
-        handleConfusion(controller, message, bot);
+        return handleConfusion(controller, message, bot);
     }
     switch (intent.intent) {
         case "vcAddFilesIntent":
@@ -185,15 +187,13 @@ function handleIntent(controller, intent, bot, message) {
             break;
         default:
             var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: intent.intent, state: 0};
-            bot.startConversation(message, function (err, convo) {
+
              functions.sendRequest(reqBody).then((r) => {
                     var r_body = JSON.parse(r.body);
-                    convo.say(r_body.content);
-                      convo.next();
+                    bot.reply(message, r_body);
                     });
             console.log("In handleIntent()'s default switch case");
-            bot.reply(message, "I don't recognize this intent.");
-            })
+            // bot.reply(message, "I don't recognize this intent.");
             break;
     }
   
@@ -236,7 +236,7 @@ function handleConfusion(controller, message, bot) {
                     callback: function (reply, convo) {
                         // !!!
                         console.log(message.text);
-                        createExample(controller.conversation, "vcAddFilesIntent", message.text, "testing!!!");
+                        functions.createExample(controller.conversation, "vcAddFilesIntent", message.text, "testing!!!");
                         addFiles(bot, message);
                         convo.next();
                     }
@@ -247,7 +247,7 @@ function handleConfusion(controller, message, bot) {
                         // !!!
                         convo.say("request sent");
                         console.log(message.text);
-                        createExample(controller.conversation,"vcAddFilesIntent", message.text, "testing!!!");  
+                        functions.createExample(controller.conversation,"vcAddFilesIntent", message.text, "testing!!!");  
                         convo.next()
                     }
                 }]);
