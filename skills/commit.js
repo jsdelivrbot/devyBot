@@ -1,7 +1,7 @@
 var functions = require("./functions");
 
 module.exports = async function commit(bot, message) {
-   var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcCommitIntent", state: 0};
+   var reqBody = { intent: "vcCommitIntent", state: 0};
    var res = await functions.sendRequest(reqBody);
    res = JSON.parse(res.body);
    var state = res.state;
@@ -26,8 +26,14 @@ module.exports = async function commit(bot, message) {
                         },
                         {
                             "name": "no",
-                            "text": "No",
+                            "text": "No, just make a commit",
                             "value": "no",
+                            "type": "button",
+                        },
+                        {
+                            "name": "cancel",
+                            "text": "Cancel",
+                            "value": "cancel",
                             "type": "button",
                         }
                     ]
@@ -38,7 +44,7 @@ module.exports = async function commit(bot, message) {
                 pattern: "yes",
                 callback: function (reply, convo) {
                     // !!!
-                    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcCommitIntent", state: 1};
+                    var reqBody = {intent: "vcCommitIntent", state: 1};
                     functions.sendRequest(reqBody).then((r) => {
                         var r_body = JSON.parse(r.body);
                     convo.say(r_body.content);
@@ -49,13 +55,23 @@ module.exports = async function commit(bot, message) {
             {
                 pattern: "no",
                 callback: function (reply, convo) {
-                    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcCommitIntent", state: 2};
+                    var reqBody = {intent: "vcCommitIntent", state: 2};
                     functions.sendRequest(reqBody).then((r) => {
                         var r_body = JSON.parse(r.body);
                     convo.say(r_body.content);
                       convo.next();});
                 }
-            }]);
+            },{
+                pattern: "cancel",
+                callback: function (reply, convo) {
+                    var reqBody = {intent: "vcCommitIntent", state: 3};
+                    functions.sendRequest(reqBody).then((r) => {
+                        var r_body = JSON.parse(r.body);
+                    convo.say(r_body.content);
+                      convo.next();});
+                }
+            }
+            ]);
          convo.next();
          break;
          

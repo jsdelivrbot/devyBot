@@ -11,7 +11,14 @@ var addFiles = require("./addFiles");
 var commit = require("./commit");
 var pull = require("./pull");
 var push = require("./push");
+var runTests = require("./runTests");
+var createPR = require("./createPR");
+var startIssue = require("./startIssue");
+var listIssues = require("./listIssues");
+var getFileOwner = require("./getFileOwner");
+var getCurrentBranch = require("./getCurrentBranch");
 var functions = require("./functions");
+
 const minimum_confidence = 0.5;
 var sampleMessage = null;
 var sampleBot = null;
@@ -24,6 +31,9 @@ var intentList = [
         "text": "Commit code",
         "value": "vcCommitIntent"
     },
+    {   "text": "List issues assigned to me",
+        "value": "ghListIssuesIntent"
+    },
     {
         "text": "Pull code from git",
         "value": "vcPullIntent"
@@ -31,6 +41,10 @@ var intentList = [
     {
         "text": "Get the owner of the file",
         "value": "vcGetFileOwnerIntent"
+    },
+    {
+        "text": "Run tests",
+        "value": "runTests"
     },
     {
         "text": "Add my files",
@@ -47,24 +61,107 @@ var intentList = [
     {
         "text": "Create new workflow",
         "value": "addNewWorkflow"
+    },
+    {
+        "text": "Create new pull request",
+        "value": "createPR"
     }
 ]
 
-// module.exports = {
-//     updateWatsonConversation: function() {
-
-//     }
-// }
-
-
-
-
-
-
-
 module.exports = function (controller) {
 
-//     controller.hears(['some question?'], 'direct_message,direct_mention', function(bot, message) {
+    controller.on('addFiles',  () => addFiles(sampleBot, sampleMessage));
+    controller.on('commit',  () => commit(sampleBot, sampleMessage));
+    controller.on('pull',  () => pull(sampleBot, sampleMessage));
+    controller.on('push',  () => push(sampleBot, sampleMessage));
+    controller.on('runTests', (body) => runTests(sampleBot, sampleMessage, body));
+    controller.on('createPR', () => createPR(sampleBot, sampleMessage));
+    controller.on('listIssues', () => listIssues(sampleBot, sampleMessage));
+    controller.on('getFileOwner', () => getFileOwner(sampleBot, sampleMessage));
+    controller.on('getCurrentBranch', () => getCurrentBranch(sampleBot, sampleMessage));
+  
+    // listen to everything and send it to Watson
+    controller.hears(['.*'], 'direct_message,direct_mention', function (bot, message) {
+        try {
+            sampleBot = bot;
+            sampleMessage = message;
+            console.log(message.user); // user is UASR6U42J, channel: 'DAW4Q7A5C'
+            if (message) {
+                let intents = message.watsonData.intents;
+                console.log(JSON.stringify(intents));
+
+                if (!intents.length) handleConfusion(controller, message, bot);
+                else handleIntent(controller, intents[0], bot, message);
+            }
+        } catch (err) {
+            bot.say(message, "I'm sorry, but for technical reasons I can't respond to your message");
+            console.error(err);
+        }
+    });
+}
+
+
+// takes in the intent returned by Watson
+// if the confidence of the intent is lower than the set threshold, 
+// it calls handleConfusion
+function handleIntent(controller, intent, bot, message) {
+    let entities = message.watsonData.entities;
+    if (intent.confidence < minimum_confidence) {
+        return handleConfusion(controller, message, bot);
+    }
+    switch (intent.intent) {
+        case "vcAddFilesIntent":
+            addFiles(bot, message);
+            break;
+        case "vcCommitIntent": 
+            commit(bot,message);
+            break;
+        case "vcPullIntent":
+            pull(bot,message);
+            break;
+        case "vcPushIntent":
+            push(bot,message);
+            break;
+        case "addNewWorkflow":
+            openEditor(bot, message);
+            break;
+        case "runTests":
+            runTests(bot, message, null);
+            break;
+        case "createPR":
+            createPR(bot, message);
+            break;
+        case "ghListIssuesIntent":
+            listIssues(bot, message);
+            break;
+        case "vcGetFileOwnerIntent":
+            getFileOwner(bot, message);
+            break;
+        case "vcGetCurrentBranchIntent":
+            getCurrentBranch(bot, message);
+        case "ghStartIssueIntent":
+            let num_of_entities = entities.length;
+            console.log(typeof num_of_entities);
+            let startPos = entities[num_of_entities - 1].location[0];
+            let endPos = entities[num_of_entities - 1].location[1];
+            let issueBranch = message.text.substring(startPos, endPos);
+            startIssue(bot, message, issueBranch);
+            bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
+            break;
+        default:
+            var reqBody = {intent: intent.intent, state: 0};
+
+             functions.sendRequest(reqBody).then((r) => {
+                    var r_body = JSON.parse(r.body);
+                    bot.reply(message, r_body);
+                    });
+            console.log("In handleIntent()'s default switch case");
+            // bot.reply(message, "I don't recognize this intent.");
+            break;
+    }
+  
+  
+  //     controller.hears(['some question?'], 'direct_message,direct_mention', function(bot, message) {
 
 //         // commit intent
 //         bot.createConversation(message, function(err, convo) {
@@ -126,85 +223,6 @@ module.exports = function (controller) {
 //         });
 
 //     });
-
-    controller.on('addFiles',  () => addFiles(sampleBot, sampleMessage));
-    controller.on('commit',  () => commit(sampleBot, sampleMessage));
-    controller.on('pull',  () => pull(sampleBot, sampleMessage));
-    controller.on('push',  () => push(sampleBot, sampleMessage));
-    controller.on('newWFCreated', () => functions.updateWatson(controller));
-  
-    // listen to everything and send it to Watson
-    controller.hears(['.*'], 'direct_message,direct_mention', function (bot, message) {
-        try {
-            sampleBot = bot;
-            sampleMessage = message;
-            console.log(message.user); // user is UASR6U42J, channel: 'DAW4Q7A5C'
-            if (message) {
-                let intents = message.watsonData.intents;
-                console.log(JSON.stringify(intents));
-
-                if (!intents.length) handleConfusion(controller, message, bot);
-                else handleIntent(controller, intents[0], bot, message);
-            }
-        } catch (err) {
-            bot.say(message, "I'm sorry, but for technical reasons I can't respond to your message");
-            console.error(err);
-        }
-    });
-}
-
-// takes in the intent returned by Watson
-// if the confidence of the intent is lower than the set threshold, 
-// it calls handleConfusion
-function handleIntent(controller, intent, bot, message) {
-    let entities = message.watsonData.entities;
-    if (intent.confidence < minimum_confidence) {
-        return handleConfusion(controller, message, bot);
-    }
-    switch (intent.intent) {
-        case "vcAddFilesIntent":
-            addFiles(bot, message);
-            break;
-        case "vcCommitIntent": 
-            commit(bot,message);
-            break;
-        case "vcPullIntent":
-            pull(bot,message);
-            break;
-        case "vcPushIntent":
-            push(bot,message);
-            break;
-        case "addNewWorkflow":
-            openEditor(bot, message);
-            break;
-        case "ghStartIssueIntent":
-            let num_of_entities = entities.length;
-            console.log(typeof num_of_entities);
-            let startPos = entities[num_of_entities - 1].location[0];
-            let endPos = entities[num_of_entities - 1].location[1];
-            let issueBranch = message.text.substring(startPos, endPos);
-            bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
-            break;
-        default:
-            var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: intent.intent, state: 0};
-
-             functions.sendRequest(reqBody).then((r) => {
-                    var r_body = JSON.parse(r.body);
-                    bot.reply(message, r_body);
-                    });
-            console.log("In handleIntent()'s default switch case");
-            // bot.reply(message, "I don't recognize this intent.");
-            break;
-    }
-  
-    if (intent.intent == "ghStartIssueIntent") {
-        let num_of_entities = entities.length;
-        console.log(typeof num_of_entities);
-        let startPos = entities[num_of_entities - 1].location[0];
-        let endPos = entities[num_of_entities - 1].location[1];
-        let issueBranch = message.text.substring(startPos, endPos);
-        bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
-    }
 }
 
 function handleConfusion(controller, message, bot) {
@@ -226,7 +244,13 @@ function handleConfusion(controller, message, bot) {
                                 "text": "Pick an intent...",
                                 "type": "select",
                                 "options": intentList
-                            }
+                            },
+                          {
+                            "name": "cancel",
+                            "text": "Cancel",
+                            "value": "cancel",
+                            "type": "button",
+                        }
                         ]
                     }
                 ]
@@ -250,8 +274,15 @@ function handleConfusion(controller, message, bot) {
                         functions.createExample(controller.conversation,"vcAddFilesIntent", message.text, "testing!!!");  
                         convo.next()
                     }
-                }]);
-        convo.say("Noted and new example for addFile intent created!");
+                },
+              {
+                    pattern: "cancel",
+                    callback: function (reply, convo) {
+                        convo.say("Action canceled.");
+                        convo.next();
+                    }
+                }
+            ]);
     });
 }
 
@@ -276,6 +307,7 @@ function openEditor(bot, message) {
         }
     ]
 }
+     
             ////////////
             // the following version doesnt work but is prettier
             ////////////
@@ -293,12 +325,3 @@ function openEditor(bot, message) {
   //   });
   // });
 }
-
-
-
-
-
-
-
-
-

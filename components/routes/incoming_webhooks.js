@@ -20,7 +20,7 @@ module.exports = async function(webserver, controller) {
         controller.handleWebhookPayload(req, res);
 
     });
-  
+
     webserver.post('/workflow', function(req, res) {
       try {
        console.log("at /workflow endpoint: " + JSON.stringify(req.body));
@@ -35,7 +35,6 @@ module.exports = async function(webserver, controller) {
                 .post(res2.path)
                 .send({text: res2.text})
                 .then(()=>{
-                   controller.trigger('newWFCreated', []);
                     //console.log(main);//.updateWatsonConversation();
                     console.log("new workflow created");
             })
@@ -45,7 +44,7 @@ module.exports = async function(webserver, controller) {
     }catch(err)
     {}});
   
-  
+
       webserver.post('/say', function(req, res) {
          console.log("at /say endpoint: " + JSON.stringify(req.body));
          var body = req.body;
@@ -59,9 +58,10 @@ module.exports = async function(webserver, controller) {
       webserver.post('/trigger', function(req, res) {
         var body = Object.keys(req.body)[0];
         console.log('in /trigger endpoint. body is '+ body);
-        controller.trigger(body,[]);
+        controller.trigger(body,[body]);
         res.status(200);
         res.json("success");
         })
 }
-    
+
+

@@ -147,7 +147,6 @@ if (!process.env.clientId || !process.env.clientSecret) {
   // require("fs").readdirSync(normalizedPath).forEach(function(file) {
   //   require("./skills/" + file)(controller);
   // });
-  
   require("./skills/main")(controller);
 
   // This captures and evaluates any message sent to the bot as a DM
@@ -183,7 +182,6 @@ if (!process.env.clientId || !process.env.clientSecret) {
 }
 
 
-
 function usage_tip() {
     console.log('~~~~~~~~~~');
     console.log('Botkit Starter Kit');
@@ -193,3 +191,4 @@ function usage_tip() {
     console.log('Get a Botkit Studio token here: https://studio.botkit.ai/')
     console.log('~~~~~~~~~~');
 }
+

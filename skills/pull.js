@@ -1,7 +1,7 @@
 var functions = require("./functions");
 
 module.exports = async function pull(bot,message) {
-    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcPullIntent", state: 0};
+    var reqBody = {intent: "vcPullIntent", state: 0};
     try {
         var res = await functions.sendRequest(reqBody);
         var body = JSON.parse(res.body);
@@ -34,7 +34,7 @@ module.exports = async function pull(bot,message) {
             {
                 pattern: "yes",
                 callback: function (reply, convo) {
-                    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcPullIntent", state: 1};
+                    var reqBody = {intent: "vcPullIntent", state: 1};
                     functions.sendRequest(reqBody).then((r) => {
                       var r_body = JSON.parse(r.body);
                       convo.say(r_body.content);
@@ -45,7 +45,7 @@ module.exports = async function pull(bot,message) {
             {
                 pattern: "no",
                 callback: function (reply, convo) {
-                    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcPullIntent", state: 2};
+                    var reqBody = {intent: "vcPullIntent", state: 2};
                     functions.sendRequest(reqBody).then((r) => {
                     var r_body = JSON.parse(r.body);
                     convo.say(r_body.content);

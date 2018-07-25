@@ -7,6 +7,8 @@ module.exports = {
   
   // sends request to proxy. takes in the body part of the request
   sendRequest: async function sendRequest(body) {
+    body.user = "amzn1.ask.account." + process.env.USERID,
+
     console.log("Sending to proxy: " + JSON.stringify(body));
     return new Promise(function (fulfill, reject) {
         try {
@@ -50,12 +52,6 @@ module.exports = {
   
   // update watson after a new workflow is created
   updateWatson: function (controller){
-        var watson = require('watson-developer-cloud');
-        controller.conversation = new watson.ConversationV1({
-    username: process.env.CONVERSATION_USERNAME,
-    password: process.env.CONVERSATION_PASSWORD,
-    workspace_id: process.env.WORKSPACE_ID,
-    version_date: '2018-05-30',
-});
+        
   }
 }

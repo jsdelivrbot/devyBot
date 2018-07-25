@@ -3,7 +3,7 @@ var functions = require("./functions");
 module.exports = async function(bot, message , files = []) {
 
     // start with state 0, getting the list of files to be added 
-    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcAddFilesIntent", state: 0, files: files};
+    var reqBody = {intent: "vcAddFilesIntent", state: 0, files: files};
     try {
         var res = await functions.sendRequest(reqBody);
         var fileNames = JSON.parse(res.body);
@@ -60,8 +60,7 @@ module.exports = async function(bot, message , files = []) {
                 pattern: "yes",
                 callback: function (reply, convo) {
                     // !!!
-                    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, 
-                                   intent: "vcAddFilesIntent", 
+                    var reqBody = {intent: "vcAddFilesIntent", 
                                    state: 1,
                                    files: fileNames
                                   };
@@ -75,7 +74,7 @@ module.exports = async function(bot, message , files = []) {
             {
                 pattern: "cancel",
                 callback: function (reply, convo) {
-                    var reqBody = {user: "amzn1.ask.account." + process.env.USERID, intent: "vcAddFilesIntent", state: 3};
+                    var reqBody = {intent: "vcAddFilesIntent", state: 3};
                     functions.sendRequest(reqBody).then((r) => {
                         var r_body = JSON.parse(r.body);
                     convo.say(r_body.content);
@@ -89,6 +88,16 @@ module.exports = async function(bot, message , files = []) {
             {
                 pattern: "no",
                 callback: function (reply, convo) {
+                    if (fileNames.length === 1) {
+                      functions.sendRequest({
+                                    intent: "vcAddFilesIntent",
+                                    state: 3,
+                                }).then((r)=> {
+                        convo.say(JSON.parse(r.body).content);
+                        convo.next();
+                      });
+                      return;
+                    }
                     // review single files
                     var attachments = [];
                     var patterns = [];
@@ -108,7 +117,6 @@ module.exports = async function(bot, message , files = []) {
                             pattern: i.toString(),
                             callback: function (reply, convo) {
                                 var reqBody = {
-                                    user: "amzn1.ask.account." + process.env.USERID,
                                     intent: "vcAddFilesIntent",
                                     state: 2,
                                     removeIndex: i,
