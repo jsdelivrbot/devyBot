@@ -66,6 +66,10 @@ var intentList = [
     {
         "text": "Create new pull request",
         "value": "createPR"
+    },
+    {
+        "text": "Check out a branch",
+        "value": "ghCheckoutBranch"
     }
 ]
 
