@@ -2,7 +2,6 @@ var functions = require("./functions");
 
 module.exports = async function (bot,message, issueBranch) {
     var reqBody;
-    var command;
     reqBody = {intent: "ghListIssuesIntent"};
     try {
         var res = await functions.sendRequest(reqBody);
@@ -11,7 +10,7 @@ module.exports = async function (bot,message, issueBranch) {
            if (body.state==="error") {
              convo.say(body.content);
              return;
-           }
+           } 
            if (body.number === 0) convo.say(body.content);
            else {
              var titles = body.content;

@@ -1,8 +1,9 @@
 var functions = require("./functions");
 
-module.exports = async function (bot,message) {
+module.exports = async function (bot,message, branchName) {
     var reqBody;
-    reqBody = {intent: "vcGetCurrentBranchIntent", state: 0};
+    console.log("IN CHECKOUT BRANCH: branchName is "+ branchName);
+    reqBody = {intent: "ghCheckoutBranch", state: 0, branchName: branchName};
     try {
         var res = await functions.sendRequest(reqBody);
         var body = JSON.parse(res.body);
@@ -17,7 +18,7 @@ module.exports = async function (bot,message) {
                 convo.next();
             });
          break;
-          
+    
           case "success":
           case "fail":
             convo.say(body.content);

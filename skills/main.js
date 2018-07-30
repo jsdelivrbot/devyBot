@@ -18,6 +18,7 @@ var listIssues = require("./listIssues");
 var getFileOwner = require("./getFileOwner");
 var getCurrentBranch = require("./getCurrentBranch");
 var functions = require("./functions");
+var checkoutBranch = require("./checkoutBranch");
 
 const minimum_confidence = 0.5;
 var sampleMessage = null;
@@ -139,14 +140,35 @@ function handleIntent(controller, intent, bot, message) {
             break;
         case "vcGetCurrentBranchIntent":
             getCurrentBranch(bot, message);
+            break;
         case "ghStartIssueIntent":
             let num_of_entities = entities.length;
-            console.log(typeof num_of_entities);
             let startPos = entities[num_of_entities - 1].location[0];
             let endPos = entities[num_of_entities - 1].location[1];
-            let issueBranch = message.text.substring(startPos, endPos);
-            startIssue(bot, message, issueBranch);
-            bot.reply(message, "I've switched you to branch " + issueBranch + " Let me know when you're finished.");
+            let issueNumber = message.text.substring(startPos, endPos);
+            console.log(entities);
+            startIssue(bot, message, issueNumber);
+            // bot.reply(message, "I've switched you to branch " + issueNumber + " Let me know when you're finished.");
+            break;
+        case "ghCheckoutBranch" :
+            console.log("ENTITIES: "+entities);
+            var branchName;
+            if (entities.length>0) {
+                let startPos = entities[0].location[0];
+                let endPos = entities[0].location[1];
+                branchName = message.text.substring(startPos, endPos);
+                console.log("BRANCH NAME IS "+branchName);
+                checkoutBranch(bot, message, branchName);
+            } else {
+                bot.startConversation(message, function (err, convo) {
+                  convo.ask('Could you repeat the name of the branch?', function (reply, convo){
+                    branchName = reply.text;
+                    checkoutBranch(bot, message, branchName);
+                  })
+                  convo.next();
+                });
+            }
+            
             break;
         default:
             var reqBody = {intent: intent.intent, state: 0};
