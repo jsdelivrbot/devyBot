@@ -3,11 +3,18 @@ var http = require('http');
 var chai = require('chai'), chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 
+var userID = "";
 module.exports = {
   
+  // sets the userID for sendRequest function later
+  setUserID: function (string) {
+    userID = string;
+  },
+  
   // sends request to proxy. takes in the body part of the request
-  sendRequest: async function sendRequest(body) {
-    body.user = "amzn1.ask.account." + process.env.USERID,
+  sendRequest: async function (body) {
+    // body.user = "amzn1.ask.account." + process.env.USERID,
+    body.user = userID;//process.env.USERID,
 
     console.log("Sending to proxy: " + JSON.stringify(body));
     return new Promise(function (fulfill, reject) {
@@ -20,7 +27,7 @@ module.exports = {
                     fulfill(res);
                 });
         } catch (err) {
-            console.error(err);
+            console.log(err);
             reject(err);
         }
     });

@@ -19,6 +19,7 @@ var getFileOwner = require("./getFileOwner");
 var getCurrentBranch = require("./getCurrentBranch");
 var functions = require("./functions");
 var checkoutBranch = require("./checkoutBranch");
+var createBranch = require("./createBranch");
 
 const minimum_confidence = 0.5;
 var sampleMessage = null;
@@ -70,11 +71,17 @@ var intentList = [
     {
         "text": "Check out a branch",
         "value": "ghCheckoutBranch"
+    },
+    {
+        "text": "Create a branch",
+        "value": "createBranch"
     }
+  
 ]
 
 module.exports = function (controller) {
 
+  try{
     controller.on('addFiles',  () => addFiles(sampleBot, sampleMessage));
     controller.on('commit',  () => commit(sampleBot, sampleMessage));
     controller.on('pull',  () => pull(sampleBot, sampleMessage));
@@ -91,6 +98,7 @@ module.exports = function (controller) {
             sampleBot = bot;
             sampleMessage = message;
             console.log(message.user); // user is UASR6U42J, channel: 'DAW4Q7A5C'
+            functions.setUserID(message.user);
             if (message) {
                 let intents = message.watsonData.intents;
                 console.log(JSON.stringify(intents));
@@ -100,9 +108,12 @@ module.exports = function (controller) {
             }
         } catch (err) {
             bot.say(message, "I'm sorry, but for technical reasons I can't respond to your message");
-            console.error(err);
+            console.log(err);
         }
     });
+  } catch (err) {
+     console.log("In the most general try-catch block: "+err);
+  }
 }
 
 
@@ -111,6 +122,10 @@ module.exports = function (controller) {
 // it calls handleConfusion
 function handleIntent(controller, intent, bot, message) {
     let entities = message.watsonData.entities;
+    let num_of_entities;
+    let startPos;
+    let endPos;
+    let issueNumber;
     if (intent.confidence < minimum_confidence) {
         return handleConfusion(controller, message, bot);
     }
@@ -145,11 +160,21 @@ function handleIntent(controller, intent, bot, message) {
         case "vcGetCurrentBranchIntent":
             getCurrentBranch(bot, message);
             break;
+        case "createBranch":
+            num_of_entities = entities.length;
+            if (num_of_entities > 0) {
+              startPos = entities[num_of_entities - 1].location[0];
+              endPos = entities[num_of_entities - 1].location[1];
+              issueNumber = message.text.substring(startPos, endPos);
+              console.log(entities);
+            }
+            createBranch(bot, message, issueNumber);
+            break;
         case "ghStartIssueIntent":
-            let num_of_entities = entities.length;
-            let startPos = entities[num_of_entities - 1].location[0];
-            let endPos = entities[num_of_entities - 1].location[1];
-            let issueNumber = message.text.substring(startPos, endPos);
+            num_of_entities = entities.length;
+            startPos = entities[num_of_entities - 1].location[0];
+            endPos = entities[num_of_entities - 1].location[1];
+            issueNumber = message.text.substring(startPos, endPos);
             console.log(entities);
             startIssue(bot, message, issueNumber);
             // bot.reply(message, "I've switched you to branch " + issueNumber + " Let me know when you're finished.");
