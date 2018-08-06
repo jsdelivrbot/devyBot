@@ -7,9 +7,10 @@ module.exports = async function (bot,message, issueNumber = null) {
     if (issueNumber != null) {
        reqBody = {intent: "createBranch", state: 0, issueNumber: issueNumber};
     }else {
-        convo.ask("What is the number of the issue you would like to create a branch on?", async function (err, reply) {
-          console.log("here"+reply.text);
-          issueNumber = reply.text;
+        var string = "What is the number of the issue you would like to create a branch on?";
+        convo.ask(string, async function (err, reply) {
+          console.log(reply.responses[string].text);
+          issueNumber = reply.responses[string].text;
           convo.next();
           reqBody = {intent: "createBranch", state: 0, issueNumber: issueNumber};
         });

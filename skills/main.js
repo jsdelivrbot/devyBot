@@ -24,6 +24,7 @@ var createBranch = require("./createBranch");
 const minimum_confidence = 0.5;
 var sampleMessage = null;
 var sampleBot = null;
+var issueNumber;
 var intentList = [
     {
         "text": "Push code to git",
@@ -79,9 +80,13 @@ var intentList = [
   
 ]
 
-module.exports = function (controller) {
+module.exports = {
+  setIssueNumber: function(num) {
+    console.log("setting current issue number to "+num);
+    issueNumber = num;
+  },
+  main: function (controller) {
 
-  try{
     controller.on('addFiles',  () => addFiles(sampleBot, sampleMessage));
     controller.on('commit',  () => commit(sampleBot, sampleMessage));
     controller.on('pull',  () => pull(sampleBot, sampleMessage));
@@ -111,9 +116,7 @@ module.exports = function (controller) {
             console.log(err);
         }
     });
-  } catch (err) {
-     console.log("In the most general try-catch block: "+err);
-  }
+}
 }
 
 
@@ -125,7 +128,7 @@ function handleIntent(controller, intent, bot, message) {
     let num_of_entities;
     let startPos;
     let endPos;
-    let issueNumber;
+    let issueNumber2;
     if (intent.confidence < minimum_confidence) {
         return handleConfusion(controller, message, bot);
     }
@@ -161,24 +164,25 @@ function handleIntent(controller, intent, bot, message) {
             getCurrentBranch(bot, message);
             break;
         case "createBranch":
+            if (issueNumber!=0) return createBranch(bot, message, issueNumber);
             num_of_entities = entities.length;
             if (num_of_entities > 0) {
               startPos = entities[num_of_entities - 1].location[0];
               endPos = entities[num_of_entities - 1].location[1];
-              issueNumber = message.text.substring(startPos, endPos);
+              issueNumber2 = message.text.substring(startPos, endPos);
               console.log(entities);
             }
-            createBranch(bot, message, issueNumber);
+            createBranch(bot, message, issueNumber2);
             break;
-        case "ghStartIssueIntent":
-            num_of_entities = entities.length;
-            startPos = entities[num_of_entities - 1].location[0];
-            endPos = entities[num_of_entities - 1].location[1];
-            issueNumber = message.text.substring(startPos, endPos);
-            console.log(entities);
-            startIssue(bot, message, issueNumber);
-            // bot.reply(message, "I've switched you to branch " + issueNumber + " Let me know when you're finished.");
-            break;
+        // case "ghStartIssueIntent":
+        //     num_of_entities = entities.length;
+        //     startPos = entities[num_of_entities - 1].location[0];
+        //     endPos = entities[num_of_entities - 1].location[1];
+        //     issueNumber = message.text.substring(startPos, endPos);
+        //     console.log(entities);
+        //     startIssue(bot, message, issueNumber);
+        //     // bot.reply(message, "I've switched you to branch " + issueNumber + " Let me know when you're finished.");
+        //     break;
         case "ghCheckoutBranch" :
             console.log("ENTITIES: "+entities);
             var branchName;
@@ -337,9 +341,11 @@ function handleConfusion(controller, message, bot) {
     });
 }
 
-function openEditor(bot, message) {
+async function openEditor(bot, message) {
   // bot.startConversation(message, function(err, convo) {
   //   convo.ask({
+  var link = await functions.sendRequest({intent: "addNewWorkflow"});
+  console.log(link.body);
   bot.reply(message, 
             {
     "text": "Here's the link to the editor:",
@@ -351,7 +357,7 @@ function openEditor(bot, message) {
                     "type": "button",
                     "name": "Workflow Editor",
                     "text": "Workflow Editor",
-                    "url": "file:///Users/anniewang/Desktop/devy/jsplumb-master/editor.html",
+                    "url": "file://"+JSON.parse(link.body).content,
                     "style": "primary",
                 }
             ]

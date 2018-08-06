@@ -57,8 +57,8 @@ var watsonMiddleware = require('botkit-middleware-watson')({
   username: process.env.CONVERSATION_USERNAME,
   password: process.env.CONVERSATION_PASSWORD,
   workspace_id: process.env.WORKSPACE_ID,
-  version_date: '2017-05-26',
-  minimum_confidence: 0.50, // (Optional) Default is 0.75
+  version: '2017-07-30'
+  // minimum_confidence: 0.50, // (Optional) Default is 0.75
 });
 
 var watson = require('watson-developer-cloud');
@@ -66,7 +66,7 @@ var conversation = new watson.ConversationV1({
     username: process.env.CONVERSATION_USERNAME,
     password: process.env.CONVERSATION_PASSWORD,
     workspace_id: process.env.WORKSPACE_ID,
-    version_date: '2018-05-30',
+    version: '2018-07-30 ',
 });
 
 if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT) {
@@ -95,6 +95,7 @@ if (process.env.MONGO_URI) {
     bot_options.json_file_store = __dirname + '/.data/db/'; // store user data in a simple JSON format
 }
 
+try {
 // Create the Botkit controller, which controls all instances of the bot.
 var controller = Botkit.slackbot(bot_options);
 controller.startTicking();
@@ -147,7 +148,7 @@ if (!process.env.clientId || !process.env.clientSecret) {
   // require("fs").readdirSync(normalizedPath).forEach(function(file) {
   //   require("./skills/" + file)(controller);
   // });
-  require("./skills/main")(controller);
+  require("./skills/main").main(controller);
 
   // This captures and evaluates any message sent to the bot as a DM
   // or sent to the bot in the form "@bot message" and passes it to
@@ -180,7 +181,9 @@ if (!process.env.clientId || !process.env.clientSecret) {
       console.log('To enable, pass in a studio_token parameter with a token from https://studio.botkit.ai/');
   }
 }
-
+} catch (err) {
+  console.log("caught global error:"+err);
+}
 
 function usage_tip() {
     console.log('~~~~~~~~~~');
