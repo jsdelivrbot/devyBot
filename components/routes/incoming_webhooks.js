@@ -56,12 +56,17 @@ module.exports = async function(webserver, controller) {
       })
   
       webserver.post('/trigger', function(req, res) {
-        var body = Object.keys(req.body)[0];
-        console.log('in /trigger endpoint. body is '+ body);
-        controller.trigger(body,[body]);
+        try {
+        var body =JSON.parse(Object.keys(req.body)[0]);
+        console.log('in /trigger endpoint. body is '+ JSON.stringify(body));
+        controller.trigger(body.string,[body.content]);
         res.status(200);
         res.json("success");
-        })
+      }catch(err){
+        console.log(err);
+      }
+      });
 }
+
 
 

@@ -3,7 +3,8 @@ var functions = require("./functions");
 module.exports = async function (bot,message,body) {
     var reqBody;
     var command;
-    if (body === null) command = null;
+    console.log(body);
+    if (typeof body === 'undefined' || body === null) command = null;
     else command = body.command;
     console.log("IN RUN TESTS: command is "+ body);
     reqBody = {intent: "runTests", state: 0};

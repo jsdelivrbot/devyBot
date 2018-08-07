@@ -96,13 +96,14 @@ module.exports = {
     controller.on('listIssues', () => listIssues(sampleBot, sampleMessage));
     controller.on('getFileOwner', () => getFileOwner(sampleBot, sampleMessage));
     controller.on('getCurrentBranch', () => getCurrentBranch(sampleBot, sampleMessage));
-  
+    controller.on('check out a branch', (branchName) => checkoutBranch(sampleBot, sampleMessage, branchName));
+    controller.on('create a branch', (num) => createBranch(sampleBot,sampleMessage,num));
     // listen to everything and send it to Watson
     controller.hears(['.*'], 'direct_message,direct_mention', function (bot, message) {
         try {
             sampleBot = bot;
             sampleMessage = message;
-            console.log(message.user); // user is UASR6U42J, channel: 'DAW4Q7A5C'
+            console.log("user is "+message.user); // user is UASR6U42J, channel: 'DAW4Q7A5C'
             functions.setUserID(message.user);
             if (message) {
                 let intents = message.watsonData.intents;
@@ -133,6 +134,9 @@ function handleIntent(controller, intent, bot, message) {
         return handleConfusion(controller, message, bot);
     }
     switch (intent.intent) {
+        case "getUserID":
+            bot.reply(message, "Your user ID is "+message.user);
+            break;
         case "vcAddFilesIntent":
             addFiles(bot, message);
             break;
@@ -197,6 +201,7 @@ function handleIntent(controller, intent, bot, message) {
                   convo.ask('Could you repeat the name of the branch?', function (reply, convo){
                     branchName = reply.text;
                     checkoutBranch(bot, message, branchName);
+                    convo.next();
                   })
                   convo.next();
                 });
