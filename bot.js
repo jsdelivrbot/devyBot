@@ -52,7 +52,7 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 var env = require('node-env-file');
-env('.env');
+env(__dirname + '/.env');
 var watsonMiddleware = require('botkit-middleware-watson')({
   username: process.env.CONVERSATION_USERNAME,
   password: process.env.CONVERSATION_PASSWORD,
