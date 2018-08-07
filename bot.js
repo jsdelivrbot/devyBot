@@ -182,7 +182,7 @@ if (!process.env.clientId || !process.env.clientSecret) {
   }
 }
 } catch (err) {
-  console.log("caught global error:"+err);
+  console.log("caught global error:"+JSON.stringify(err));
 }
 
 function usage_tip() {
