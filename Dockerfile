@@ -1,6 +1,5 @@
 FROM node:6-alpine
-EXPOSE 443
-EXPOSE 11500
+EXPOSE 11501
 VOLUME ["/app/ssl"]
 WORKDIR /app
 COPY ./ ./
