@@ -57,7 +57,7 @@ var watsonMiddleware = require('botkit-middleware-watson')({
   username: process.env.CONVERSATION_USERNAME,
   password: process.env.CONVERSATION_PASSWORD,
   workspace_id: process.env.WORKSPACE_ID,
-  version: '2017-07-30'
+  version: '2018-07-30'
   // minimum_confidence: 0.50, // (Optional) Default is 0.75
 });
 
@@ -66,7 +66,7 @@ var conversation = new watson.ConversationV1({
     username: process.env.CONVERSATION_USERNAME,
     password: process.env.CONVERSATION_PASSWORD,
     workspace_id: process.env.WORKSPACE_ID,
-    version: '2018-07-30 ',
+    version: '2018-07-30',
 });
 
 if (!process.env.clientId || !process.env.clientSecret || !process.env.PORT) {
@@ -182,7 +182,7 @@ if (!process.env.clientId || !process.env.clientSecret) {
   }
 }
 } catch (err) {
-  console.log("caught global error:"+JSON.stringify(err));
+  console.log("caught global error:"+err);
 }
 
 function usage_tip() {

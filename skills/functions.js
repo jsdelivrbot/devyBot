@@ -48,6 +48,7 @@ module.exports = {
         intent: intent,
         text: example
     };
+    console.log("at createExample, params is "+JSON.stringify(params));
     conversation.createExample(params, function (err, response) {
         if (err) {
             console.error(err);
@@ -56,9 +57,5 @@ module.exports = {
         }
     });
   },
-  
-  // update watson after a new workflow is created
-  updateWatson: function (controller){
-        
-  }
+
 }

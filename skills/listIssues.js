@@ -33,6 +33,7 @@ module.exports = async function (bot, message, issueBranch) {
                 callback: function(reply, convo) {
                   let issueNumber = reply.actions[0].value;
                   require("./main").setIssueNumber(issueNumber);
+                  convo.say("Good to know you're working on issue number "+issueNumber+"!");
                   functions.sendRequest({intent: "setIssueNumber", issueNumber: issueNumber});
                   // convo.say(reply.text+" detected");
                   convo.next();

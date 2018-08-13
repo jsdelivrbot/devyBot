@@ -41,10 +41,10 @@ var intentList = [
         "text": "Pull code from git",
         "value": "vcPullIntent"
     },
-    {
-        "text": "Get the owner of the file",
-        "value": "vcGetFileOwnerIntent"
-    },
+    // {
+    //     "text": "Get the owner of the file",
+    //     "value": "vcGetFileOwnerIntent"
+    // },
     {
         "text": "Run tests",
         "value": "runTests"
@@ -57,10 +57,10 @@ var intentList = [
         "text": "Get the current branch",
         "value": "vcGetCurrentBranchIntent"
     },
-    {
-        "text": "Start working on an issue",
-        "value": "ghStartIssueIntent"
-    },
+    // {
+    //     "text": "Start working on an issue",
+    //     "value": "ghStartIssueIntent"
+    // },
     {
         "text": "Create new workflow",
         "value": "addNewWorkflow"
@@ -87,16 +87,17 @@ module.exports = {
   },
   main: function (controller) {
 
-    controller.on('addFiles',  () => addFiles(sampleBot, sampleMessage));
+    controller.on('add files',  () => addFiles(sampleBot, sampleMessage));
     controller.on('commit',  () => commit(sampleBot, sampleMessage));
     controller.on('pull',  () => pull(sampleBot, sampleMessage));
     controller.on('push',  () => push(sampleBot, sampleMessage));
-    controller.on('runTests', (body) => runTests(sampleBot, sampleMessage, body));
+    controller.on('run tests', (body) => runTests(sampleBot, sampleMessage, body));
     controller.on('createPR', () => createPR(sampleBot, sampleMessage));
-    controller.on('listIssues', () => listIssues(sampleBot, sampleMessage));
+    controller.on('list issues', () => listIssues(sampleBot, sampleMessage));
     controller.on('getFileOwner', () => getFileOwner(sampleBot, sampleMessage));
     controller.on('getCurrentBranch', () => getCurrentBranch(sampleBot, sampleMessage));
     controller.on('check out a branch', (branchName) => checkoutBranch(sampleBot, sampleMessage, branchName));
+    controller.on('customized command', (command) => customCommand(sampleBot,sampleMessage,command));
     controller.on('create a branch', (num) => createBranch(sampleBot,sampleMessage,num));
     // listen to everything and send it to Watson
     controller.hears(['.*'], 'direct_message,direct_mention', function (bot, message) {
@@ -107,7 +108,7 @@ module.exports = {
             functions.setUserID(message.user);
             if (message) {
                 let intents = message.watsonData.intents;
-                console.log(JSON.stringify(intents));
+                // console.log(JSON.stringify(intents));
 
                 if (!intents.length) handleConfusion(controller, message, bot);
                 else handleIntent(controller, intents[0], bot, message);
@@ -166,6 +167,9 @@ function handleIntent(controller, intent, bot, message) {
             break;
         case "vcGetCurrentBranchIntent":
             getCurrentBranch(bot, message);
+            break;
+        case "customized command":
+            customCommand(bot, message);
             break;
         case "createBranch":
             if (issueNumber!=0) return createBranch(bot, message, issueNumber);
@@ -286,6 +290,18 @@ function handleIntent(controller, intent, bot, message) {
 }
 
 function handleConfusion(controller, message, bot) {
+    var patterns = [];
+    for (var i in intentList) {
+      patterns.push({
+        pattern: intentList[i],
+                    callback: function (reply, convo) {
+                      console.log(reply.text);
+                        functions.createExample(controller.conversation, reply.text, message.text, "example created by devy");
+                        controller.trigger(reply.text);
+                        convo.next();
+                    }
+      });
+    }
     bot.startConversation(message, function (err, convo) {
         convo.ask(
             {
@@ -314,35 +330,7 @@ function handleConfusion(controller, message, bot) {
                         ]
                     }
                 ]
-            }, [
-                {
-                    pattern: "vcAddFilesIntent",
-                    callback: function (reply, convo) {
-                        // !!!
-                        console.log(message.text);
-                        functions.createExample(controller.conversation, "vcAddFilesIntent", message.text, "testing!!!");
-                        addFiles(bot, message);
-                        convo.next();
-                    }
-                },
-                {
-                    pattern: "commit",
-                    callback: function (reply, convo) {
-                        // !!!
-                        convo.say("request sent");
-                        console.log(message.text);
-                        functions.createExample(controller.conversation,"vcAddFilesIntent", message.text, "testing!!!");  
-                        convo.next()
-                    }
-                },
-              {
-                    pattern: "cancel",
-                    callback: function (reply, convo) {
-                        convo.say("Action canceled.");
-                        convo.next();
-                    }
-                }
-            ]);
+            }, patterns);
     });
 }
 
@@ -386,4 +374,10 @@ async function openEditor(bot, message) {
            );
   //   });
   // });
+}
+
+async function customCommand(bot, message,command){
+    var res = await functions.sendRequest({intent: "customized command", command: command});
+    console.log(res.body);
+    bot.reply(message, JSON.parse(res.body).content);
 }

@@ -14,6 +14,7 @@ module.exports = async function (bot,message, issueNumber = null) {
           convo.next();
           reqBody = {intent: "createBranch", state: 0, issueNumber: issueNumber};
         });
+        convo.next();
     }
     try {
         var res = await functions.sendRequest(reqBody);
