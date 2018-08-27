@@ -87,6 +87,7 @@ module.exports = {
   },
   main: function (controller) {
 
+    // triggers are defined here
     controller.on('add files',  () => addFiles(sampleBot, sampleMessage));
     controller.on('commit',  () => commit(sampleBot, sampleMessage));
     controller.on('pull',  () => pull(sampleBot, sampleMessage));
@@ -131,6 +132,7 @@ function handleIntent(controller, intent, bot, message) {
     let startPos;
     let endPos;
     let issueNumber2;
+    // if the intent has too low a confidence, there is a high chance that there is a confusion
     if (intent.confidence < minimum_confidence) {
         return handleConfusion(controller, message, bot);
     }
@@ -194,6 +196,9 @@ function handleIntent(controller, intent, bot, message) {
         case "ghCheckoutBranch" :
             console.log("ENTITIES: "+entities);
             var branchName;
+            // I'm getting the value of branch name out manually here,
+            // assuming that the branch name should be at the end of the sentense,
+            // aka the user would say things like "check out branch master"
             if (entities.length>0) {
                 let startPos = entities[0].location[0];
                 let endPos = entities[0].location[1];
@@ -201,6 +206,8 @@ function handleIntent(controller, intent, bot, message) {
                 console.log("BRANCH NAME IS "+branchName);
                 checkoutBranch(bot, message, branchName);
             } else {
+                // this prompt is for the case where the program 
+                // fails to extract the name of the branch in the previous trigger message
                 bot.startConversation(message, function (err, convo) {
                   convo.ask('Could you repeat the name of the branch?', function (reply, convo){
                     branchName = reply.text;
@@ -210,11 +217,11 @@ function handleIntent(controller, intent, bot, message) {
                   convo.next();
                 });
             }
-            
             break;
         default:
+            // when the intent is not one of the cases above, it can only be a customized workflow intent,
+            // thus the bot should forward it to the client program and let it recognize the workflow intent
             var reqBody = {intent: intent.intent, state: 0};
-
              functions.sendRequest(reqBody).then((r) => {
                     var r_body = JSON.parse(r.body);
                     bot.reply(message, r_body);
@@ -289,6 +296,11 @@ function handleIntent(controller, intent, bot, message) {
 //     });
 }
 
+
+// on confusion, the bot prompts the user and ask for the intent of a previous message, 
+// and create a new example with the message text for the specified intent on watson workspace.
+// if new intent cases is created, the intentList variable which gives the intent options to the user in this prompt
+// should be updated too.
 function handleConfusion(controller, message, bot) {
     var patterns = [];
     for (var i in intentList) {
@@ -334,6 +346,10 @@ function handleConfusion(controller, message, bot) {
     });
 }
 
+
+// on the "open workflow editor" intent, this function simply asks for the relative path of the html file 
+// from the client program, and then sends user the link. 
+// Once the user clicks on the link, the local file, aka workflow editor UI should be opened in the browser. 
 async function openEditor(bot, message) {
   // bot.startConversation(message, function(err, convo) {
   //   convo.ask({
@@ -376,6 +392,8 @@ async function openEditor(bot, message) {
   // });
 }
 
+// this function is only expected to be triggered by the client program as a step of a workflow.
+// the command should be specified in the request from the client program
 async function customCommand(bot, message,command){
     var res = await functions.sendRequest({intent: "customized command", command: command});
     console.log(res.body);
